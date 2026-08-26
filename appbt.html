@@ -3,43 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Airsoft Control - Overgrown</title>
+    <title>Overgrown - Painel Tático</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #ffffff; padding: 20px; text-align: center; margin: 0; }
-        h1 { color: #00ff88; margin-bottom: 5px;}
-        .status { color: #aaaaaa; font-size: 0.9em; margin-bottom: 20px; }
-        .card { background: #1e1e1e; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); text-align: left; }
-        .card label { font-weight: bold; display: block; margin-bottom: 5px; color: #ddd; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #ffffff; padding: 15px; margin: 0; }
+        h1 { color: #00ff88; text-align: center; margin: 5px 0; font-size: 22px; text-transform: uppercase; letter-spacing: 2px;}
+        
+        /* Conexão */
+        .status-bar { text-align: center; color: #aaaaaa; font-size: 0.85em; margin-bottom: 15px; }
+        .btn-connect { background: #00ff88; color: #000; width: 100%; border: none; border-radius: 5px; font-weight: bold; font-size: 16px; padding: 12px; margin-bottom: 20px; cursor: pointer; }
+        
+        /* Dashboard (Placar em tempo real) */
+        .dashboard { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 15px; margin-bottom: 25px; text-align: center; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .dash-status { font-size: 20px; font-weight: bold; margin-bottom: 15px; color: #fff; padding: 5px; border-radius: 5px; background: #333; }
+        .times-container { display: flex; justify-content: space-between; gap: 10px; }
+        .time-box { flex: 1; padding: 15px 5px; border-radius: 8px; font-size: 24px; font-weight: bold; font-family: monospace; }
+        .time-amarelo { background: rgba(255, 204, 0, 0.1); color: #ffcc00; border: 1px solid #ffcc00; }
+        .time-azul { background: rgba(0, 123, 255, 0.1); color: #00aaff; border: 1px solid #00aaff; }
+        .dash-battery { font-size: 12px; color: #aaa; margin-top: 15px; }
+
+        /* Controles */
+        .card { background: #1e1e1e; border-radius: 8px; padding: 15px; margin-bottom: 12px; }
+        .card label { font-weight: bold; display: block; margin-bottom: 8px; color: #ddd; font-size: 14px; }
         .row { display: flex; gap: 10px; }
-        input[type="number"] { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 16px; }
-        button { border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
-        .btn-send { background: #007bff; color: white; }
+        input[type="number"] { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #2a2a2a; color: #fff; font-size: 16px; text-align: center; }
+        button { border: none; border-radius: 5px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; }
+        .btn-send { background: #007bff; color: white; padding: 0 20px; }
         .btn-send:active { background: #0056b3; }
-        .btn-connect { background: #00ff88; color: #000; width: 100%; margin-bottom: 20px; padding: 15px; }
-        .btn-danger { background: #ff4444; color: white; width: 100%; padding: 15px; margin-bottom: 10px; }
-        .btn-warning { background: #ffbb33; color: black; width: 100%; padding: 15px; }
+        
+        .action-row { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-danger { background: #ff4444; color: white; flex: 1; padding: 15px; }
+        .btn-warning { background: #ffbb33; color: black; flex: 1; padding: 15px; }
     </style>
 </head>
 <body>
 
     <h1>OVERGROWN CT</h1>
-    <div class="status" id="statusText">Status: Desconectado</div>
+    <div class="status-bar" id="statusText">Status: Desconectado</div>
+    <button class="btn-connect" id="btnConnect" onclick="connectBLE()">📡 Conectar ao Prop</button>
 
-    <button class="btn-connect" id="btnConnect" onclick="connectBLE()">Conectar ao Prop</button>
+    <!-- DASHBOARD DE TELEMETRIA -->
+    <div class="dashboard">
+        <div class="dash-status" id="dashStatus">AGUARDANDO DADOS...</div>
+        <div class="times-container">
+            <div class="time-box time-amarelo">
+                <div style="font-size: 10px; margin-bottom: 5px; color: #ddd;">AMARELO (ACUMULADO)</div>
+                <span id="tempoAmarelo">00:00</span>
+            </div>
+            <div class="time-box time-azul">
+                <div style="font-size: 10px; margin-bottom: 5px; color: #ddd;">AZUL (ACUMULADO)</div>
+                <span id="tempoAzul">00:00</span>
+            </div>
+        </div>
+        <div class="dash-battery" id="dashBattery">Bateria Prop: --%</div>
+    </div>
 
+    <!-- CONFIGURAÇÕES -->
     <div class="card">
-        <label>Tempo de Vitória (Minutos)</label>
+        <label>Alvo de Vitória (Minutos)</label>
         <div class="row">
             <input type="number" id="inputVitoria" value="15" min="1">
-            <button class="btn-send" onclick="sendData('V')">Enviar</button>
+            <button class="btn-send" onclick="sendData('V')">Salvar</button>
         </div>
     </div>
 
     <div class="card">
-        <label>Tempo de Pré-jogo (Minutos)</label>
+        <label>Contagem Pré-jogo (Minutos)</label>
         <div class="row">
             <input type="number" id="inputPreJogo" value="5" min="1">
-            <button class="btn-send" onclick="sendData('P')">Enviar</button>
+            <button class="btn-send" onclick="sendData('P')">Salvar</button>
         </div>
     </div>
 
@@ -47,62 +78,118 @@
         <label>Brilho dos LEDs (%)</label>
         <div class="row">
             <input type="number" id="inputBrilho" value="100" min="1" max="100">
-            <button class="btn-send" onclick="sendData('B')">Enviar</button>
+            <button class="btn-send" onclick="sendData('B')">Salvar</button>
         </div>
     </div>
 
-    <button class="btn-danger" onclick="sendAction('R')">FORÇAR REINÍCIO</button>
-    <button class="btn-warning" onclick="sendAction('Z')">PAUSAR / RETOMAR</button>
+    <!-- AÇÕES DIRETAS -->
+    <div class="action-row">
+        <button class="btn-warning" onclick="sendAction('Z')">⏸ PAUSAR</button>
+        <button class="btn-danger" onclick="sendAction('R')">🔄 REINICIAR</button>
+    </div>
 
     <script>
-        const deviceName = "OVERGROWN_PROP";
+        // UUIDs do Bluetooth
         const bleService = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-        const bleCharacteristic = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+        const bleCharRX = "beb5483e-36e1-4688-b7f5-ea07361b26a8"; // Celular envia p/ ESP32
+        const bleCharTX = "8a892b15-9776-464f-b6df-205105260b4a"; // ESP32 envia p/ Celular
 
-        let bleDevice, characteristicOut;
+        let bleDevice, characteristicRX, characteristicTX;
+
+        // Formatação de milissegundos para MM:SS
+        function formatTime(ms) {
+            let totalSec = Math.floor(ms / 1000);
+            let min = Math.floor(totalSec / 60);
+            let sec = totalSec % 60;
+            return min.toString().padStart(2, '0') + ':' + sec.toString().padStart(2, '0');
+        }
 
         async function connectBLE() {
             try {
                 document.getElementById('statusText').innerText = 'Status: Procurando...';
+                
                 bleDevice = await navigator.bluetooth.requestDevice({
-                    filters: [{ name: deviceName }],
+                    filters: [{ name: "OVERGROWN_PROP" }],
                     optionalServices: [bleService]
                 });
 
                 bleDevice.addEventListener('gattserverdisconnected', () => {
                     document.getElementById('statusText').innerText = 'Status: Desconectado';
-                    document.getElementById('btnConnect').innerText = 'Reconectar';
+                    document.getElementById('btnConnect').innerText = '📡 Reconectar';
+                    document.getElementById('dashStatus').innerText = 'CONEXÃO PERDIDA';
+                    document.getElementById('dashStatus').style.background = '#ff4444';
                 });
 
                 const server = await bleDevice.gatt.connect();
                 const service = await server.getPrimaryService(bleService);
-                characteristicOut = await service.getCharacteristic(bleCharacteristic);
+                
+                characteristicRX = await service.getCharacteristic(bleCharRX);
+                characteristicTX = await service.getCharacteristic(bleCharTX);
+
+                // Assina o canal de recebimento (Notificações do ESP32)
+                await characteristicTX.startNotifications();
+                characteristicTX.addEventListener('characteristicvaluechanged', handleTelemetry);
 
                 document.getElementById('statusText').innerText = 'Status: Conectado!';
-                document.getElementById('btnConnect').innerText = 'Conectado (Clique para Reconectar)';
+                document.getElementById('btnConnect').innerText = '📡 Conectado (Clique para Forçar Reconexão)';
             } catch (error) {
                 console.error(error);
                 document.getElementById('statusText').innerText = 'Status: Erro na Conexão';
             }
         }
 
+        // Processa os dados que chegam do ESP32 (1 vez por segundo)
+        function handleTelemetry(event) {
+            const value = new TextDecoder().decode(event.target.value);
+            // Payload esperado: "Estado,AcumuladoAmarelo,AcumuladoAzul,Bateria"
+            const parts = value.split(',');
+            
+            if (parts.length >= 4) {
+                const estado = parseInt(parts[0]);
+                const timeAmarelo = parseInt(parts[1]);
+                const timeAzul = parseInt(parts[2]);
+                const bateria = parseInt(parts[3]);
+
+                // Atualiza Placar
+                document.getElementById('tempoAmarelo').innerText = formatTime(timeAmarelo);
+                document.getElementById('tempoAzul').innerText = formatTime(timeAzul);
+                document.getElementById('dashBattery').innerText = `Bateria Prop: ${bateria}%`;
+
+                // Máquina de Estados Visual
+                const elStatus = document.getElementById('dashStatus');
+                elStatus.style.color = '#fff';
+
+                switch(estado) {
+                    case 0: elStatus.innerText = "PRE-JOGO (ENCHENDO)"; elStatus.style.background = '#444'; break;
+                    case 1: elStatus.innerText = "JOGO LIVRE"; elStatus.style.background = '#444'; break;
+                    case 2: elStatus.innerText = ">>> DOMÍNIO AMARELO"; elStatus.style.background = '#ccaa00'; break;
+                    case 3: elStatus.innerText = ">>> DOMÍNIO AZUL"; elStatus.style.background = '#0055aa'; break;
+                    case 4: elStatus.innerText = "FIM DE JOGO"; elStatus.style.background = '#222'; break;
+                    case 5: elStatus.innerText = "MODO CONFIGURAÇÃO"; elStatus.style.background = '#660066'; break;
+                    case 6: elStatus.innerText = "JOGO PAUSADO"; elStatus.style.background = '#ff8800'; break;
+                    default: elStatus.innerText = "DESCONHECIDO"; break;
+                }
+            }
+        }
+
+        // Função de envio de configuração numéricas
         async function sendData(prefix) {
-            if (!characteristicOut) return alert("Conecte-se primeiro!");
+            if (!characteristicRX) return alert("Conecte-se primeiro!");
             let val = "";
             if(prefix === 'V') val = document.getElementById('inputVitoria').value;
             if(prefix === 'P') val = document.getElementById('inputPreJogo').value;
             if(prefix === 'B') val = document.getElementById('inputBrilho').value;
             
             const payload = prefix + "," + val;
-            await characteristicOut.writeValue(new TextEncoder().encode(payload));
-            alert("Enviado: " + payload);
+            await characteristicRX.writeValue(new TextEncoder().encode(payload));
+            if (navigator.vibrate) navigator.vibrate(50);
         }
 
+        // Função de envio de botões de ação (sem parâmetros)
         async function sendAction(command) {
-            if (!characteristicOut) return alert("Conecte-se primeiro!");
-            await characteristicOut.writeValue(new TextEncoder().encode(command));
-            // Feedback vibratório no celular se suportado
-            if (navigator.vibrate) navigator.vibrate(200); 
+            if (!characteristicRX) return alert("Conecte-se primeiro!");
+            await characteristicRX.writeValue(new TextEncoder().encode(command));
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]); 
         }
     </script>
 </body>
