@@ -32,6 +32,8 @@
 <section class="card"><div class="row between"><h2>Histórico de partidas</h2><span class="badge" id="historyCount">0 partidas</span></div>
   <div class="row history-tools"><label for="day">Dia</label><input type="date" id="day"><button class="secondary" id="today">Hoje</button></div>
   <div class="row"><button class="secondary" id="png">Salvar imagem</button><button class="secondary" id="pdf">Salvar PDF</button></div>
+  <p id="exportStatus" role="status" aria-live="polite" class="muted" style="font-size:13px"></p>
+  <div id="exportPanel" hidden></div>
   <p class="muted" style="font-size:12px">Salvo neste navegador e neste celular. Exporte antes de limpar os dados do navegador. Para registrar o resultado, mantenha o app conectado até o fim.</p>
   <div id="active" class="notice" hidden></div><div id="history"></div>
   <details><summary>Backup do histórico</summary><p class="muted" style="font-size:13px">O JSON permite restaurar o histórico em outro aparelho. Importar mescla os registros sem apagar os atuais.</p><div class="row"><button class="secondary" id="backup">Baixar backup</button><button class="secondary" id="restore">Importar backup</button><input hidden id="backupFile" type="file" accept="application/json,.json"></div></details>
@@ -78,6 +80,7 @@ function upsert(record){const index=store.matches.findIndex(r=>r.id===record.id)
 function closeDraft(status){if(!store.draft)return;store.draft.status=status;store.draft.endedAt=store.draft.lastSeen;upsert({...store.draft});store.draft=null;}
 let device=null,rx=null,tx=null,extended=false,connected=false,connecting=false,busy=false,last=null,lastAt=0,lastMono=0,config=null,pendingRestart=null;
 let legacyId=store.draft?.source==='legacy'?store.draft.id:null;
+let exportBusy=false, exportUrls=[];
 function recordTelemetry(p,now=new Date().toISOString()){
   const deviceKey=device?.id||'central', deviceName=device?.name||'OVERGROWN_PROP';
   if(!p.extended){
@@ -169,7 +172,7 @@ function observation(r){return [!r.startedAt?'Início não acompanhado':null,r.g
 function element(tag,text,cls){const e=document.createElement(tag);e.textContent=text;if(cls)e.className=cls;return e;}
 function renderHistory(){
   const list=selectedRecords(), host=$('history');host.replaceChildren();$('historyCount').textContent=`${list.length} partida${list.length===1?'':'s'}`;
-  $('png').disabled=$('pdf').disabled=!list.length;
+  $('png').disabled=$('pdf').disabled=exportBusy;
   if(!list.length)host.append(element('div','Nenhuma partida registrada neste dia.','empty'));
   for(const [i,r] of [...list].reverse().entries()){
     const article=element('article','','match');
@@ -217,20 +220,35 @@ async function makePDF(canvases){
   add(`trailer\n<< /Size ${offsets.length} /Root 1 0 R >>\nstartxref\n${start}\n%%EOF`);return new Blob(parts,{type:'application/pdf'});
 }
 async function exportReport(type){
-  const records=selectedRecords();if(!records.length)return;
-  $('png').disabled=$('pdf').disabled=true;
+  if(exportBusy)return;
+  const records=selectedRecords(),panel=$('exportPanel');
+  panel.replaceChildren();panel.hidden=true;
+  exportUrls.forEach(url=>URL.revokeObjectURL(url));exportUrls=[];
+  if(!records.length){$('exportStatus').textContent='Não há partidas registradas neste dia. Escolha outro dia ou acompanhe uma partida até o fim. A partida em andamento ainda não entra no relatório.';return;}
+  exportBusy=true;$('png').disabled=$('pdf').disabled=true;
+  $('exportStatus').textContent='Preparando relatório…';
   try{
     const pages=reportPages(records),base=`overgrown-${$('day').value}`;
-    if(type==='pdf')download(await makePDF(pages),`${base}.pdf`);
-    else if(pages.length===1)download(await canvasBlob(pages[0]),`${base}.png`);
-    else{
-      // Uma escolha por página evita bloqueio de downloads múltiplos no celular.
-      const dialog=document.createElement('dialog');dialog.style.cssText='max-width:90vw;border:1px solid #435139;border-radius:12px;background:#232b1e;color:#edf0e6;padding:24px';dialog.append(element('h2',`${pages.length} imagens para este dia`),element('p','Salve cada página ou use PDF para um arquivo único.'));
-      for(let i=0;i<pages.length;i++){const b=element('button',`Salvar página ${i+1}`);b.style.margin='6px';b.onclick=async()=>download(await canvasBlob(pages[i]),`${base}-${i+1}.png`);dialog.append(b);}
-      const close=element('button','Fechar','secondary');close.onclick=()=>dialog.close();dialog.append(close);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();
+    const files=type==='pdf'?[await makePDF(pages)]:await Promise.all(pages.map(page=>canvasBlob(page)));
+    for(let i=0;i<files.length;i++){
+      const url=URL.createObjectURL(files[i]);exportUrls.push(url);
+      const name=`${base}${files.length>1?`-${i+1}`:''}.${type}`;
+      const section=element('div','','notice');
+      section.append(element('h3',type==='pdf'?'PDF pronto':`Imagem ${i+1} de ${files.length}`));
+      if(type==='png'){
+        const image=document.createElement('img');image.src=url;image.alt=`Relatório ${name}`;
+        image.style.cssText='display:block;width:100%;height:auto;margin:12px 0;border-radius:6px';section.append(image);
+      }
+      // Link pronto antes do toque: o download parte de um gesto real do usuário.
+      const link=element('a',type==='pdf'?'Baixar PDF':`Baixar imagem${files.length>1?` ${i+1}`:''}`);
+      link.href=url;link.download=name;link.style.cssText='display:inline-block;padding:12px 0;font-weight:bold';
+      const open=element('a','Abrir arquivo');open.href=url;open.target='_blank';open.rel='noopener';open.style.marginLeft='20px';
+      section.append(link,open);panel.append(section);
     }
-    message('Relatório gerado com os registros do dia selecionado.');
-  }catch(error){message(`Falha ao exportar: ${error.message}`,true);}finally{renderHistory();}
+    panel.hidden=false;
+    $('exportStatus').textContent=type==='png'?'Imagem pronta abaixo. Toque em “Baixar imagem”. No celular, você também pode manter a imagem pressionada para ver as opções de salvar ou compartilhar.':'PDF pronto abaixo. Toque em “Baixar PDF” ou “Abrir arquivo”.';
+  }catch(error){$('exportStatus').textContent=`Não foi possível gerar o relatório: ${error.message}`;}
+  finally{exportBusy=false;renderHistory();}
 }
 $('connect').onclick=connect;
 document.querySelectorAll('[data-setting]').forEach(b=>b.onclick=()=>setting(b.dataset.setting));
