@@ -1,321 +1,259 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dominação Overgrown</title>
-    <style>
-        /* Paleta baseada na identidade visual Overgrown */
-        :root {
-            --bg-color: #2b3026;
-            --card-bg: #1c2118;
-            --text-main: #e0e4d8;
-            --text-muted: #8e9a83;
-            --accent-green: #6b8e23;
-            --btn-connect: #556b2f;
-            --btn-start: #455d21;
-            --btn-pause: #b08d57;
-            --btn-danger: #8a3324;
-            --amarelo: #d4b84c;
-            --azul: #4a7c8c;
-        }
-
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-main); 
-            padding: 15px; 
-            margin: 0; 
-        }
-        
-        h1 { 
-            text-align: center; 
-            margin: 5px 0; 
-            font-size: 24px; 
-            text-transform: uppercase; 
-            letter-spacing: 2px;
-            color: var(--accent-green);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        }
-        
-        .status-bar { 
-            text-align: center; 
-            color: var(--text-muted); 
-            font-size: 0.85em; 
-            margin-bottom: 15px; 
-            font-weight: bold;
-        }
-        
-        .btn-connect { 
-            background: var(--btn-connect); 
-            color: var(--text-main); 
-            width: 100%; 
-            border: 2px solid #3e4d23; 
-            border-radius: 5px; 
-            font-weight: bold; 
-            font-size: 16px; 
-            padding: 12px; 
-            margin-bottom: 20px; 
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        
-        .dashboard { 
-            background: var(--card-bg); 
-            border: 1px solid #3e4d23; 
-            border-radius: 8px; 
-            padding: 15px; 
-            margin-bottom: 25px; 
-            text-align: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
-        }
-        
-        .dash-status { 
-            font-size: 20px; 
-            font-weight: bold; 
-            margin-bottom: 15px; 
-            color: var(--text-main); 
-            padding: 8px; 
-            border-radius: 5px; 
-            background: #11140e; 
-            border: 1px solid #3e4d23;
-        }
-        
-        .times-container { 
-            display: flex; 
-            justify-content: space-between; 
-            gap: 10px; 
-        }
-        
-        .time-box { 
-            flex: 1; 
-            padding: 15px 5px; 
-            border-radius: 6px; 
-            font-size: 24px; 
-            font-weight: bold; 
-            font-family: monospace; 
-            background: #11140e;
-        }
-        
-        .time-amarelo { 
-            color: var(--amarelo); 
-            border: 1px solid var(--amarelo); 
-        }
-        
-        .time-azul { 
-            color: var(--azul); 
-            border: 1px solid var(--azul); 
-        }
-        
-        .dash-battery { 
-            font-size: 12px; 
-            color: var(--text-muted); 
-            margin-top: 15px; 
-        }
-
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid #3e4d23;
-            border-radius: 8px; 
-            padding: 15px; 
-            margin-bottom: 12px; 
-        }
-        
-        .card label { 
-            font-weight: bold; 
-            display: block; 
-            margin-bottom: 8px; 
-            color: var(--text-muted); 
-            font-size: 14px; 
-            text-transform: uppercase;
-        }
-        
-        .row { display: flex; gap: 10px; }
-        
-        input[type="number"] { 
-            flex: 1; 
-            padding: 10px; 
-            border-radius: 5px; 
-            border: 1px solid #3e4d23; 
-            background: #11140e; 
-            color: var(--text-main); 
-            font-size: 16px; 
-            text-align: center; 
-        }
-        
-        button { 
-            border: none; 
-            border-radius: 5px; 
-            font-weight: bold; 
-            font-size: 14px; 
-            cursor: pointer; 
-            text-transform: uppercase;
-        }
-        
-        .btn-send { background: var(--accent-green); color: var(--text-main); padding: 0 20px; }
-        
-        .action-row { 
-            display: flex; 
-            flex-direction: column;
-            gap: 10px; 
-            margin-top: 20px; 
-        }
-        
-        .action-row-horizontal {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-start { background: var(--btn-start); color: var(--text-main); padding: 15px; width: 100%; border: 1px solid var(--accent-green);}
-        .btn-warning { background: var(--btn-pause); color: #1a1a1a; flex: 1; padding: 15px; }
-        .btn-danger { background: var(--btn-danger); color: var(--text-main); flex: 1; padding: 15px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#22291e">
+<title>Dominação Overgrown</title>
+<style>
+:root{color-scheme:dark;--bg:#151b13;--card:#232b1e;--line:#435139;--text:#edf0e6;--muted:#b3bea7;--green:#a5bf64;--yellow:#f1cf65;--blue:#87c9e8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}main{max-width:820px;margin:auto;padding:24px 16px 50px}h1{font-size:27px;letter-spacing:2px;margin:0}h2{font-size:20px;margin:0 0 14px}h3{font-size:16px;margin:0}p{margin:8px 0}header{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:20px}.brand{font-size:11px;letter-spacing:3px;color:var(--green);font-weight:800}.badge{font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:20px;color:var(--muted)}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}.muted,small{color:var(--muted)}small{display:block;font-size:12px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.grow{flex:1}.status{text-align:center;font-weight:800;letter-spacing:1px;padding:10px;border-bottom:1px solid var(--line)}.countdown{text-align:center;margin:20px 0}.countdown strong{display:block;font:700 44px/1.3 ui-monospace,monospace;letter-spacing:2px}.scores{display:grid;grid-template-columns:1fr 1fr;gap:12px}.score{padding:16px 6px;text-align:center;border:1px solid currentColor;border-radius:10px}.score strong{display:block;font:700 32px ui-monospace,monospace;margin-top:8px}.yellow{color:var(--yellow)}.blue{color:var(--blue)}button,input{font:inherit;border-radius:8px}button{cursor:pointer;background:var(--green);color:#19220f;border:1px solid transparent;padding:12px 16px;font-weight:750}button.secondary{background:transparent;color:var(--text);border-color:var(--line)}button.danger{background:#863d2e;color:#fff}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}input{min-width:0;background:#151b13;color:var(--text);border:1px solid var(--line);padding:10px;width:100%}input[type=date]{width:auto;max-width:100%}.field{display:grid;grid-template-columns:1fr 90px 80px;gap:10px;align-items:center;margin:16px 0}.field label{font-size:14px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.actions button:first-child{grid-column:1/-1}.notice{border-left:3px solid var(--green);padding:10px 12px;background:#1c2418;font-size:13px;margin-top:12px}.error{border-color:#ec997c;color:#ffd2c2}#message:empty{display:none}.match{border-top:1px solid var(--line);padding:16px 0}.match:last-child{padding-bottom:0}.match .scoreline{font:700 21px ui-monospace,monospace;margin:10px 0}.pill{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--green)}.empty{padding:26px 0;color:var(--muted);text-align:center}.history-tools{margin-bottom:16px}.footer{font-size:12px;margin-top:24px;color:var(--muted)}details{margin-top:16px}summary{cursor:pointer;font-weight:700}a{color:var(--green)}@media(max-width:430px){main{padding:18px 12px}header{align-items:flex-start}.card{padding:16px}.field{grid-template-columns:1fr 72px 70px;gap:6px}.field button{padding:10px 6px}.score strong{font-size:28px}h1{font-size:23px}.badge{font-size:10px}.row button{flex:1}}
+</style>
 </head>
 <body>
-
-    <h1>DOMINAÇÃO OVERGROWN</h1>
-    <div class="status-bar" id="statusText">STATUS: DESCONECTADO</div>
-    <button class="btn-connect" id="btnConnect" onclick="connectBLE()">CONECTAR AO PROP</button>
-
-    <div class="dashboard">
-        <div class="dash-status" id="dashStatus">AGUARDANDO DADOS...</div>
-        <div class="times-container">
-            <div class="time-box time-amarelo">
-                <div style="font-size: 10px; margin-bottom: 5px; color: #8e9a83;">AMARELO</div>
-                <span id="tempoAmarelo">00:00</span>
-            </div>
-            <div class="time-box time-azul">
-                <div style="font-size: 10px; margin-bottom: 5px; color: #8e9a83;">AZUL</div>
-                <span id="tempoAzul">00:00</span>
-            </div>
-        </div>
-        <div class="dash-battery" id="dashBattery">BATERIA: --%</div>
-    </div>
-
-    <div class="card">
-        <label>Tempo de Vitória (Minutos)</label>
-        <div class="row">
-            <input type="number" id="inputVitoria" value="15" min="1">
-            <button class="btn-send" onclick="sendData('V')">Salvar</button>
-        </div>
-    </div>
-
-    <div class="card">
-        <label>Contagem Pré-jogo (Minutos)</label>
-        <div class="row">
-            <input type="number" id="inputPreJogo" value="5" min="1">
-            <button class="btn-send" onclick="sendData('P')">Salvar</button>
-        </div>
-    </div>
-
-    <div class="card">
-        <label>Brilho dos LEDs (%)</label>
-        <div class="row">
-            <input type="number" id="inputBrilho" value="100" min="1" max="100">
-            <button class="btn-send" onclick="sendData('B')">Salvar</button>
-        </div>
-    </div>
-
-    <div class="action-row">
-        <button class="btn-start" onclick="sendAction('I')">▶ INÍCIO FORÇADO</button>
-        <div class="action-row-horizontal">
-            <button class="btn-warning" onclick="sendAction('Z')">⏸ PAUSAR</button>
-            <button class="btn-danger" onclick="sendAction('R')">🔄 REINICIAR</button>
-        </div>
-    </div>
-
-    <script>
-        const bleService = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-        const bleCharRX = "beb5483e-36e1-4688-b7f5-ea07361b26a8"; 
-        const bleCharTX = "8a892b15-9776-464f-b6df-205105260b4a"; 
-
-        let bleDevice, characteristicRX, characteristicTX;
-
-        function formatTime(ms) {
-            let totalSec = Math.floor(ms / 1000);
-            let min = Math.floor(totalSec / 60);
-            let sec = totalSec % 60;
-            return min.toString().padStart(2, '0') + ':' + sec.toString().padStart(2, '0');
-        }
-
-        async function connectBLE() {
-            try {
-                document.getElementById('statusText').innerText = 'STATUS: PROCURANDO...';
-                
-                bleDevice = await navigator.bluetooth.requestDevice({
-                    filters: [{ name: "OVERGROWN_PROP" }],
-                    optionalServices: [bleService]
-                });
-
-                bleDevice.addEventListener('gattserverdisconnected', () => {
-                    document.getElementById('statusText').innerText = 'STATUS: DESCONECTADO';
-                    document.getElementById('btnConnect').innerText = 'RECONECTAR';
-                    document.getElementById('dashStatus').innerText = 'CONEXÃO PERDIDA';
-                    document.getElementById('dashStatus').style.background = '#8a3324';
-                    document.getElementById('dashStatus').style.color = '#e0e4d8';
-                });
-
-                const server = await bleDevice.gatt.connect();
-                const service = await server.getPrimaryService(bleService);
-                
-                characteristicRX = await service.getCharacteristic(bleCharRX);
-                characteristicTX = await service.getCharacteristic(bleCharTX);
-
-                await characteristicTX.startNotifications();
-                characteristicTX.addEventListener('characteristicvaluechanged', handleTelemetry);
-
-                document.getElementById('statusText').innerText = 'STATUS: CONECTADO';
-                document.getElementById('btnConnect').innerText = 'CONECTADO';
-            } catch (error) {
-                console.error(error);
-                document.getElementById('statusText').innerText = 'STATUS: ERRO NA CONEXÃO';
-            }
-        }
-
-        function handleTelemetry(event) {
-            const value = new TextDecoder().decode(event.target.value);
-            const parts = value.split(',');
-            
-            if (parts.length >= 4) {
-                const estado = parseInt(parts[0]);
-                const timeAmarelo = parseInt(parts[1]);
-                const timeAzul = parseInt(parts[2]);
-                const bateria = parseInt(parts[3]);
-
-                document.getElementById('tempoAmarelo').innerText = formatTime(timeAmarelo);
-                document.getElementById('tempoAzul').innerText = formatTime(timeAzul);
-                document.getElementById('dashBattery').innerText = `BATERIA: ${bateria}%`;
-
-                const elStatus = document.getElementById('dashStatus');
-                elStatus.style.color = '#11140e';
-
-                switch(estado) {
-                    case 0: elStatus.innerText = "PRÉ-JOGO"; elStatus.style.background = '#8e9a83'; break;
-                    case 1: elStatus.innerText = "JOGO LIVRE"; elStatus.style.background = '#6b8e23'; break;
-                    case 2: elStatus.innerText = "DOMÍNIO AMARELO"; elStatus.style.background = '#d4b84c'; break;
-                    case 3: elStatus.innerText = "DOMÍNIO AZUL"; elStatus.style.background = '#4a7c8c'; break;
-                    case 4: elStatus.innerText = "FIM DE JOGO"; elStatus.style.background = '#e0e4d8'; break;
-                    case 6: elStatus.innerText = "JOGO PAUSADO"; elStatus.style.background = '#b08d57'; break;
-                    default: elStatus.innerText = "DESCONHECIDO"; elStatus.style.background = '#11140e'; elStatus.style.color = '#e0e4d8'; break;
-                }
-            }
-        }
-
-        async function sendData(prefix) {
-            if (!characteristicRX) return alert("Conecte-se primeiro!");
-            let val = "";
-            if(prefix === 'V') val = document.getElementById('inputVitoria').value;
-            if(prefix === 'P') val = document.getElementById('inputPreJogo').value;
-            if(prefix === 'B') val = document.getElementById('inputBrilho').value;
-            
-            const payload = prefix + "," + val;
-            await characteristicRX.writeValue(new TextEncoder().encode(payload));
-        }
-
-        async function sendAction(command) {
-            if (!characteristicRX) return alert("Conecte-se primeiro!");
-            await characteristicRX.writeValue(new TextEncoder().encode(command));
-        }
-    </script>
+<main>
+<header><div><div class="brand">CONTROLE DE CAMPO</div><h1>OVERGROWN</h1><small>Dominação · central de jogo</small></div><span class="badge" id="connection">Desconectado</span></header>
+<button id="connect" style="width:100%;margin-bottom:16px">Conectar à central</button>
+<div id="message" role="status" aria-live="polite" class="notice"></div>
+<section class="card" aria-label="Partida ao vivo">
+  <div class="status" id="state">AGUARDANDO CENTRAL</div>
+  <div class="countdown"><small id="countLabel">Contagem regressiva de início</small><strong id="countdown">--:--</strong><small id="countHint">Conecte para acompanhar a partida.</small></div>
+  <div class="scores"><div class="score yellow">AMARELO<strong id="yellow">00:00</strong></div><div class="score blue">AZUL<strong id="blue">00:00</strong></div></div>
+  <small style="text-align:center;margin-top:12px">Placar = tempo acumulado de domínio (min:seg)</small>
+  <small id="sync" style="text-align:center;margin-top:6px">Nenhuma leitura recebida.</small>
+  <div class="actions"><button data-control id="start" disabled>Iniciar agora</button><button data-control class="secondary" id="pause" disabled>Pausar</button><button data-control class="danger" id="reset" disabled>Reiniciar</button></div>
+</section>
+<section class="card"><h2>Configurações da central</h2>
+  <div class="field"><label for="victory">Vitória (minutos)<small id="victoryEcho">Central: —</small></label><input id="victory" type="number" min="1" max="1440" step="1" value="15"><button data-control data-setting="V" disabled>Enviar</button></div>
+  <div class="field"><label for="pregame">Pré-jogo (minutos)<small id="pregameEcho">Central: —</small></label><input id="pregame" type="number" min="1" max="1440" step="1" value="10"><button data-control data-setting="P" disabled>Enviar</button></div>
+  <div class="field"><label for="brightness">Brilho (%)<small id="brightnessEcho">Central: —</small></label><input id="brightness" type="number" min="1" max="100" step="1" value="100"><button data-control data-setting="B" disabled>Enviar</button></div>
+  <small>Os valores são enviados em tempo real. A confirmação aparece em “Central”.</small>
+</section>
+<section class="card"><div class="row between"><h2>Histórico de partidas</h2><span class="badge" id="historyCount">0 partidas</span></div>
+  <div class="row history-tools"><label for="day">Dia</label><input type="date" id="day"><button class="secondary" id="today">Hoje</button></div>
+  <div class="row"><button class="secondary" id="png">Salvar imagem</button><button class="secondary" id="pdf">Salvar PDF</button></div>
+  <p class="muted" style="font-size:12px">Salvo neste navegador e neste celular. Exporte antes de limpar os dados do navegador. Para registrar o resultado, mantenha o app conectado até o fim.</p>
+  <div id="active" class="notice" hidden></div><div id="history"></div>
+  <details><summary>Backup do histórico</summary><p class="muted" style="font-size:13px">O JSON permite restaurar o histórico em outro aparelho. Importar mescla os registros sem apagar os atuais.</p><div class="row"><button class="secondary" id="backup">Baixar backup</button><button class="secondary" id="restore">Importar backup</button><input hidden id="backupFile" type="file" accept="application/json,.json"></div></details>
+</section>
+<div class="footer">Datas e horários usam o fuso do celular. O histórico começa quando este app acompanha a central; ele não recupera partidas antigas da memória do ESP32.</div>
+</main>
+<script>
+'use strict';
+// Sem dependências externas: publicar este index.html no GitHub Pages.
+const SERVICE='4fafc201-1fb5-459e-8fcc-c5c9c331914b', RX='beb5483e-36e1-4688-b7f5-ea07361b26a8', TX='8a892b15-9776-464f-b6df-205105260b4a', HIST='8a892b15-9776-464f-b6df-205105260b4b';
+const STORAGE='overgrown.history.v1', VALID_STATES=[0,1,2,3,4,6,7];
+const $=id=>document.getElementById(id);
+const formatTime=ms=>{const s=Math.floor(Math.max(0,ms)/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+const localDay=value=>{const d=new Date(value);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+const stamp=value=>value?new Date(value).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'medium'}):'Início não acompanhado';
+const uid=()=>globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+function message(text,error=false){$('message').textContent=text;$('message').classList.toggle('error',error);}
+function parsePacket(view){
+  if(view.byteLength!==20) return null;
+  const type=view.getUint8(0), id=view.getUint32(4,true);
+  if(type===2){const target=view.getUint32(8,true),pre=view.getUint32(12,true);return target>=60000&&target<=86400000&&pre>=60000&&pre<=86400000?{kind:'config',id,target,pre}:null;}
+  if(type!==1||!VALID_STATES.includes(view.getUint8(1))||!VALID_STATES.includes(view.getUint8(2))||view.getUint8(3)>100) return null;
+  return {kind:'score',id,state:view.getUint8(1),pausedFrom:view.getUint8(2),winner:view.getUint8(1)===4?({2:'amarelo',3:'azul'}[view.getUint8(2)]||null):null,brightness:view.getUint8(3),yellow:view.getUint32(8,true),blue:view.getUint32(12,true),remaining:view.getUint32(16,true),extended:true};
+}
+function parseLegacy(text){
+  if(!/^\d+,\d+,\d+,\d+$/.test(text.trim()))return null;
+  const [state,yellow,blue]=text.trim().split(',').map(Number);
+  if(!VALID_STATES.includes(state)||![yellow,blue].every(n=>Number.isSafeInteger(n)&&n>=0&&n<=4294967295))return null;
+  return {kind:'score',state,yellow,blue,remaining:null,extended:false,pausedFrom:null};
+}
+function validRecord(r){return r&&typeof r.id==='string'&&r.id.length<=250&&typeof r.device==='string'&&r.device.length<=200&&['concluida','interrompida','incompleta','em_andamento'].includes(r.status)&&[r.yellow,r.blue].every(n=>Number.isFinite(n)&&n>=0&&n<=4294967295)&&typeof r.firstSeen==='string'&&Number.isFinite(Date.parse(r.firstSeen))&&typeof r.lastSeen==='string'&&Number.isFinite(Date.parse(r.lastSeen))&&(!r.startedAt||Number.isFinite(Date.parse(r.startedAt)))&&(!r.endedAt||Number.isFinite(Date.parse(r.endedAt)));}
+function loadStore(){
+  try{const raw=localStorage.getItem(STORAGE);if(!raw)return {version:1,matches:[],draft:null};const data=JSON.parse(raw);if(data.version!==1||!Array.isArray(data.matches)||!data.matches.every(validRecord)||(data.draft&&!validRecord(data.draft)))throw Error('Formato inválido');return data;}
+  catch(error){message('Não foi possível ler o histórico salvo. O armazenamento não será sobrescrito. Exporte os novos registros e verifique os dados do navegador.',true);storageBlocked=true;return {version:1,matches:[],draft:null};}
+}
+let storageBlocked=false, store=loadStore();
+if(store.draft)store.draft.gap=true;
+function persist(){
+  if(storageBlocked)return;
+  try{localStorage.setItem(STORAGE,JSON.stringify(store));}
+  catch(error){storageBlocked=true;message('O navegador não conseguiu salvar o histórico. Os dados desta sessão estão só na memória: baixe um backup agora.',true);}
+}
+function upsert(record){const index=store.matches.findIndex(r=>r.id===record.id);if(index<0)store.matches.push(record);else store.matches[index]=record;}
+function closeDraft(status){if(!store.draft)return;store.draft.status=status;store.draft.endedAt=store.draft.lastSeen;upsert({...store.draft});store.draft=null;}
+let device=null,rx=null,tx=null,extended=false,connected=false,connecting=false,busy=false,last=null,lastAt=0,lastMono=0,config=null,pendingRestart=null;
+let legacyId=store.draft?.source==='legacy'?store.draft.id:null;
+function recordTelemetry(p,now=new Date().toISOString()){
+  const deviceKey=device?.id||'central', deviceName=device?.name||'OVERGROWN_PROP';
+  if(!p.extended){
+    const sameLegacy=legacyId?.startsWith(`legacy:${deviceKey}:`);
+    if(!sameLegacy)legacyId=`legacy:${deviceKey}:${uid()}`;
+    if(last&&((p.state===0&&last.state!==0)||(p.state!==4&&last.state===4)))legacyId=`legacy:${deviceKey}:${uid()}`;
+    p.key=legacyId;
+  }else p.key=`${deviceKey}:${p.id}`;
+  if(pendingRestart&&Date.now()>pendingRestart.until)pendingRestart=null;
+  const restartConfirmed=pendingRestart&&p.key!==pendingRestart.key;
+  if(store.draft&&store.draft.id!==p.key)closeDraft(restartConfirmed?'interrompida':'incompleta');
+  if(p.state===0||p.state===7||(p.state===6&&[0,7].includes(p.pausedFrom))){persist();renderHistory();if(restartConfirmed)pendingRestart=null;return;}
+  const existing=store.matches.find(r=>r.id===p.key);
+  if(existing?.status==='concluida'){if(restartConfirmed)pendingRestart=null;return;}
+  if(!store.draft&&existing)store.draft={...existing,status:'em_andamento',endedAt:null,gap:true};
+  if(!store.draft){
+    const observedStart=(last&&[0,7].includes(last.state)&&Date.now()-lastAt<4500)||(restartConfirmed&&pendingRestart.command==='I');
+    store.draft={id:p.key,device:deviceName,source:p.extended?'extended':'legacy',firstSeen:now,lastSeen:now,startedAt:observedStart?now:null,endedAt:null,yellow:0,blue:0,status:'em_andamento',gap:!observedStart,target:config?.id===p.id?config.target:null};
+  }
+  Object.assign(store.draft,{yellow:p.yellow,blue:p.blue,lastSeen:now});
+  if(config?.id===p.id)store.draft.target=config.target;
+  if(p.state===4){store.draft.status='concluida';store.draft.endedAt=now;store.draft.winner=p.winner||null;upsert({...store.draft});store.draft=null;}
+  persist();renderHistory();if(restartConfirmed)pendingRestart=null;
+}
+function markGap(){if(store.draft){store.draft.gap=true;persist();renderHistory();}}
+function isFresh(){return connected&&last&&Date.now()-lastAt<4500;}
+function controls(){document.querySelectorAll('[data-control]').forEach(b=>b.disabled=!isFresh()||busy);$('connect').disabled=connecting||connected;}
+function disconnect(){connected=false;rx=null;tx=null;markGap();$('connection').textContent='Desconectado';$('connect').textContent='Reconectar à central';$('sync').textContent='Última leitura preservada. Reconecte para atualizar.';controls();renderLive();}
+async function connect(){
+  if(!navigator.bluetooth){message('Este navegador não oferece Web Bluetooth. Use um navegador compatível, como Chrome no Android, em HTTPS.',true);return;}
+  connecting=true;controls();$('connection').textContent='Conectando…';
+  try{
+    device=await navigator.bluetooth.requestDevice({filters:[{name:'OVERGROWN_PROP'}],optionalServices:[SERVICE]});
+    device.removeEventListener('gattserverdisconnected',disconnect);device.addEventListener('gattserverdisconnected',disconnect);
+    const server=await device.gatt.connect(), service=await server.getPrimaryService(SERVICE);
+    rx=await service.getCharacteristic(RX);
+    const characteristics=await service.getCharacteristics();
+    tx=characteristics.find(c=>c.uuid.toLowerCase()===HIST);extended=!!tx;
+    if(!tx)tx=await service.getCharacteristic(TX);
+    last=null;lastAt=0;config=null;
+    tx.addEventListener('characteristicvaluechanged',telemetry);
+    await tx.startNotifications();connected=true;
+    $('connection').textContent='Conectado';$('connect').textContent='Central conectada';
+    message(extended?'Conectado. Aguardando os dados da central…':'Firmware anterior: o placar e o histórico funcionam com limitações; a contagem regressiva exige o firmware que acompanha este app.');
+  }catch(error){device?.gatt?.disconnect();disconnect();message(`Não foi possível conectar: ${error.message}`,true);}
+  finally{connecting=false;controls();}
+}
+function telemetry(event){
+  const p=extended?parsePacket(event.target.value):parseLegacy(new TextDecoder().decode(event.target.value));
+  if(!p)return;
+  if(p.kind==='config'){config=p;renderConfig();return;}
+  if(lastAt&&Date.now()-lastAt>4500)markGap();
+  recordTelemetry(p);
+  last=p;lastAt=Date.now();lastMono=performance.now();renderLive();renderConfig();controls();
+}
+const names={0:'PRÉ-JOGO',1:'JOGO LIVRE',2:'DOMÍNIO AMARELO',3:'DOMÍNIO AZUL',4:'FIM DE JOGO',6:'JOGO PAUSADO',7:'INÍCIO IMINENTE'};
+function renderLive(){
+  if(!last)return;
+  $('state').textContent=names[last.state];$('yellow').textContent=formatTime(last.yellow);$('blue').textContent=formatTime(last.blue);
+  $('pause').textContent=last.state===6?'Retomar':'Pausar';
+  const fresh=isFresh(),base=last.state===6?last.pausedFrom:last.state;
+  $('sync').textContent=fresh?`Atualizado às ${new Date(lastAt).toLocaleTimeString('pt-BR')}`:`Sem atualização · última leitura às ${new Date(lastAt).toLocaleTimeString('pt-BR')}`;
+  $('countLabel').textContent=last.state===6?'Contagem pausada':'Contagem regressiva de início';
+  if(!last.extended){$('countdown').textContent='--:--';$('countHint').textContent='Atualize o firmware para receber o tempo real da central.';}
+  else if([0,7].includes(base)){
+    const elapsed=fresh&&last.state!==6?performance.now()-lastMono:0;
+    const remaining=Math.max(0,last.remaining-elapsed);
+    $('countdown').textContent=formatTime(Math.ceil(remaining/1000)*1000);
+    $('countHint').textContent=!fresh?'Última leitura da central; contagem suspensa.':last.state===6?'Retome o jogo para continuar.':remaining===0?'Aguardando confirmação de início da central.':base===7?'Os dois times estão prontos.':'Pré-jogo em andamento.';
+  }else{$('countdown').textContent=last.state===4?'FIM':'EM JOGO';$('countHint').textContent=last.state===4?'Resultado salvo no histórico.':last.state===6?'Partida pausada.':'Os tempos abaixo vêm da central.';}
+  controls();
+}
+function renderConfig(){
+  if(config){$('victoryEcho').textContent=`Central: ${config.target/60000} min`;$('pregameEcho').textContent=`Central: ${config.pre/60000} min`;}
+  if(last?.extended)$('brightnessEcho').textContent=`Central: ${last.brightness}%`;
+}
+async function send(payload){
+  if(!isFresh()||!rx){message('Conecte à central e aguarde uma leitura atualizada.',true);return false;}
+  if(busy)return false;
+  busy=true;controls();
+  try{await rx.writeValueWithResponse(new TextEncoder().encode(payload));message('Comando enviado. Aguarde a atualização da central.');return true;}
+  catch(error){message(`Falha ao enviar: ${error.message}`,true);return false;}
+  finally{busy=false;controls();}
+}
+async function setting(prefix){const id={V:'victory',P:'pregame',B:'brightness'}[prefix],input=$(id);if(!input.reportValidity())return;const n=Number(input.value);if(!Number.isInteger(n)||n<1||n>(prefix==='B'?100:1440))return;await send(`${prefix},${n}`);}
+function selectedRecords(){return store.matches.filter(r=>localDay(r.endedAt||r.lastSeen)===$('day').value).sort((a,b)=>Date.parse(a.endedAt||a.lastSeen)-Date.parse(b.endedAt||b.lastSeen));}
+function result(r){if(r.status!=='concluida')return r.status==='interrompida'?'Interrompida · último placar':'Resultado final não recebido';if(['amarelo','azul'].includes(r.winner))return `Vitória do ${r.winner}`;return r.yellow===r.blue?'Empate':r.yellow>r.blue?'Vitória do amarelo':'Vitória do azul';}
+function observation(r){return [!r.startedAt?'Início não acompanhado':null,r.gap?'Acompanhamento parcial':null,r.source==='legacy'?'Firmware anterior: identificação aproximada':null].filter(Boolean).join(' · ');}
+function element(tag,text,cls){const e=document.createElement(tag);e.textContent=text;if(cls)e.className=cls;return e;}
+function renderHistory(){
+  const list=selectedRecords(), host=$('history');host.replaceChildren();$('historyCount').textContent=`${list.length} partida${list.length===1?'':'s'}`;
+  $('png').disabled=$('pdf').disabled=!list.length;
+  if(!list.length)host.append(element('div','Nenhuma partida registrada neste dia.','empty'));
+  for(const [i,r] of [...list].reverse().entries()){
+    const article=element('article','','match');
+    article.append(element('span',r.status==='concluida'?'RESULTADO FINAL':'REGISTRO PARCIAL','pill'),element('h3',result(r)),element('small',`${r.device} · ${stamp(r.endedAt||r.lastSeen)}`));
+    const score=element('div','','scoreline');score.append(element('span',`AM ${formatTime(r.yellow)}`,'yellow'),document.createTextNode('  ×  '),element('span',`AZ ${formatTime(r.blue)}`,'blue'));article.append(score,element('small',`Início: ${r.startedAt?stamp(r.startedAt):'não acompanhado'} · ${r.status==='concluida'?'Fim':'Última leitura'}: ${stamp(r.endedAt||r.lastSeen)}`));
+    if(observation(r))article.append(element('small',observation(r)));host.append(article);
+  }
+  $('active').hidden=!store.draft;
+  if(store.draft)$('active').textContent=`Partida em acompanhamento · amarelo ${formatTime(store.draft.yellow)} × azul ${formatTime(store.draft.blue)}. O resultado será registrado quando a central informar o fim.`;
+}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
+function reportPages(records){
+  const chunks=[];for(let i=0;i<records.length;i+=7)chunks.push(records.slice(i,i+7));
+  return chunks.map((items,index)=>{
+    const canvas=document.createElement('canvas');canvas.width=1240;canvas.height=1754;const c=canvas.getContext('2d');
+    c.fillStyle='#f7f7f0';c.fillRect(0,0,1240,1754);c.fillStyle='#27371c';c.fillRect(0,0,1240,220);
+    c.fillStyle='#c3d69a';c.font='bold 20px sans-serif';c.fillText('DOMINAÇÃO · RELATÓRIO DE CAMPO',64,60);c.fillStyle='#fff';c.font='bold 46px sans-serif';c.fillText('OVERGROWN',64,120);
+    c.font='24px sans-serif';c.fillText(`Dia ${$('day').value.split('-').reverse().join('/')}  ·  ${records.length} partida(s)`,64,172);
+    let y=270;
+    for(const r of items){
+      c.fillStyle='#fff';c.fillRect(48,y-22,1144,184);c.strokeStyle='#d4d9cb';c.strokeRect(48,y-22,1144,184);
+      c.fillStyle='#25331c';c.font='bold 24px sans-serif';c.fillText(result(r),68,y+12);
+      c.fillStyle='#536049';c.font='18px sans-serif';c.fillText(`${r.status==='concluida'?'Fim':'Última leitura'}: ${stamp(r.endedAt||r.lastSeen)}  |  Início: ${r.startedAt?stamp(r.startedAt):'não acompanhado'}`,68,y+44);
+      c.font='bold 32px monospace';c.fillStyle='#8c6500';c.fillText(`AMARELO ${formatTime(r.yellow)}`,68,y+91);c.fillStyle='#205c80';c.fillText(`AZUL ${formatTime(r.blue)}`,660,y+91);
+      c.fillStyle='#536049';c.font='17px sans-serif';c.fillText(observation(r)||'Resultado recebido da central.',68,y+130);y+=198;
+    }
+    c.fillStyle='#536049';c.font='18px sans-serif';c.fillText('Placar em tempo de domínio (min:seg). Horários do celular.',64,1688);c.fillText(`Página ${index+1}/${chunks.length}  ·  Exportado em ${stamp(new Date().toISOString())}`,64,1720);
+    return canvas;
+  });
+}
+const canvasBlob=(canvas,type='image/png')=>new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Não foi possível gerar a imagem.')),type,.9));
+// PDF multipágina com páginas JPEG incorporadas; não usa serviço nem biblioteca externa.
+async function makePDF(canvases){
+  const enc=new TextEncoder(),parts=[],offsets=[0];let size=0;
+  function add(x){const b=typeof x==='string'?enc.encode(x):x;parts.push(b);size+=b.length;}
+  function obj(id,head,data){offsets[id]=size;add(`${id} 0 obj\n${head}`);if(data){add('\nstream\n');add(data);add('\nendstream');}add('\nendobj\n');}
+  add('%PDF-1.4\n');obj(1,'<< /Type /Catalog /Pages 2 0 R >>');obj(2,`<< /Type /Pages /Count ${canvases.length} /Kids [${canvases.map((_,i)=>`${3+i*3} 0 R`).join(' ')}] >>`);
+  for(let i=0;i<canvases.length;i++){
+    const id=3+i*3,jpeg=new Uint8Array(await (await canvasBlob(canvases[i],'image/jpeg')).arrayBuffer()),content=enc.encode('q\n595 0 0 842 0 0 cm\n/Im0 Do\nQ\n');
+    obj(id,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /XObject << /Im0 ${id+1} 0 R >> >> /Contents ${id+2} 0 R >>`);
+    obj(id+1,`<< /Type /XObject /Subtype /Image /Width 1240 /Height 1754 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>`,jpeg);
+    obj(id+2,`<< /Length ${content.length} >>`,content);
+  }
+  const start=size;add(`xref\n0 ${offsets.length}\n0000000000 65535 f \n`);for(const off of offsets.slice(1))add(`${String(off).padStart(10,'0')} 00000 n \n`);
+  add(`trailer\n<< /Size ${offsets.length} /Root 1 0 R >>\nstartxref\n${start}\n%%EOF`);return new Blob(parts,{type:'application/pdf'});
+}
+async function exportReport(type){
+  const records=selectedRecords();if(!records.length)return;
+  $('png').disabled=$('pdf').disabled=true;
+  try{
+    const pages=reportPages(records),base=`overgrown-${$('day').value}`;
+    if(type==='pdf')download(await makePDF(pages),`${base}.pdf`);
+    else if(pages.length===1)download(await canvasBlob(pages[0]),`${base}.png`);
+    else{
+      // Uma escolha por página evita bloqueio de downloads múltiplos no celular.
+      const dialog=document.createElement('dialog');dialog.style.cssText='max-width:90vw;border:1px solid #435139;border-radius:12px;background:#232b1e;color:#edf0e6;padding:24px';dialog.append(element('h2',`${pages.length} imagens para este dia`),element('p','Salve cada página ou use PDF para um arquivo único.'));
+      for(let i=0;i<pages.length;i++){const b=element('button',`Salvar página ${i+1}`);b.style.margin='6px';b.onclick=async()=>download(await canvasBlob(pages[i]),`${base}-${i+1}.png`);dialog.append(b);}
+      const close=element('button','Fechar','secondary');close.onclick=()=>dialog.close();dialog.append(close);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();
+    }
+    message('Relatório gerado com os registros do dia selecionado.');
+  }catch(error){message(`Falha ao exportar: ${error.message}`,true);}finally{renderHistory();}
+}
+$('connect').onclick=connect;
+document.querySelectorAll('[data-setting]').forEach(b=>b.onclick=()=>setting(b.dataset.setting));
+$('pause').onclick=()=>send('Z');
+async function restart(command){pendingRestart={command,key:last?.key,until:Date.now()+10000};if(!await send(command))pendingRestart=null;}
+$('start').onclick=()=>{if(confirm('Iniciar agora? A central zera o placar ao iniciar.'))restart('I');};
+$('reset').onclick=()=>{if(confirm('Reiniciar para o pré-jogo? O último placar acompanhado será preservado no histórico.'))restart('R');};
+$('day').value=localDay(Date.now());$('day').onchange=renderHistory;$('today').onclick=()=>{$('day').value=localDay(Date.now());renderHistory();};
+$('png').onclick=()=>exportReport('png');$('pdf').onclick=()=>exportReport('pdf');
+$('backup').onclick=()=>download(new Blob([JSON.stringify(store,null,2)],{type:'application/json'}),`overgrown-backup-${localDay(Date.now())}.json`);
+$('restore').onclick=()=>$('backupFile').click();
+$('backupFile').onchange=async event=>{
+  const file=event.target.files[0];if(!file)return;
+  try{
+    if(file.size>5000000)throw Error('Arquivo maior que 5 MB.');
+    const data=JSON.parse(await file.text());if(data.version!==1||!Array.isArray(data.matches)||data.matches.length>10000||!data.matches.every(validRecord)||(data.draft&&!validRecord(data.draft)))throw Error('Backup inválido.');
+    let added=0;for(const r of data.matches){if(!store.matches.some(x=>x.id===r.id)&&r.status!=='em_andamento'){upsert(r);added++;}}
+    if(data.draft&&!store.matches.some(r=>r.id===data.draft.id)&&store.draft?.id!==data.draft.id){upsert({...data.draft,status:'incompleta',endedAt:data.draft.lastSeen,gap:true});added++;}
+    persist();renderHistory();message(`${added} registro(s) importado(s).${storageBlocked?' Armazenamento indisponível: exporte o backup.':''}`);
+  }catch(error){message(`Não foi possível importar: ${error.message}`,true);}event.target.value='';
+};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)markGap();else renderLive();});
+setInterval(renderLive,250);renderHistory();controls();
+</script>
 </body>
 </html>
