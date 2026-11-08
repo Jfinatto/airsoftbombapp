@@ -24,25 +24,26 @@
   <div class="actions"><button data-control id="start" disabled>Iniciar agora</button><button data-control class="secondary" id="pause" disabled>Pausar</button><button data-control class="danger" id="reset" disabled>Reiniciar</button></div>
 </section>
 <section class="card"><h2>Configurações da central</h2>
-  <div class="field"><label for="victory">Vitória (minutos)<small id="victoryEcho">Central: —</small></label><input id="victory" type="number" min="1" max="1440" step="1" value="15"><button data-control data-setting="V" disabled>Enviar</button></div>
-  <div class="field"><label for="pregame">Pré-jogo (minutos)<small id="pregameEcho">Central: —</small></label><input id="pregame" type="number" min="1" max="1440" step="1" value="10"><button data-control data-setting="P" disabled>Enviar</button></div>
+  <div class="field"><label for="victory">Vitória (minutos)<small id="victoryEcho">Central: —</small></label><input id="victory" type="number" min="1" max="180" step="1" value="15"><button data-control data-setting="V" disabled>Enviar</button></div>
+  <div class="field"><label for="pregame">Pré-jogo (minutos)<small id="pregameEcho">Central: —</small></label><input id="pregame" type="number" min="0" max="180" step="1" value="10"><button data-control data-setting="P" disabled>Enviar</button></div>
   <div class="field"><label for="brightness">Brilho (%)<small id="brightnessEcho">Central: —</small></label><input id="brightness" type="number" min="1" max="100" step="1" value="100"><button data-control data-setting="B" disabled>Enviar</button></div>
-  <small>Os valores são enviados em tempo real. A confirmação aparece em “Central”.</small>
+  <small>Tempos podem ser alterados no pré-jogo. A confirmação aparece em “Central”.</small>
 </section>
 <section class="card"><div class="row between"><h2>Histórico de partidas</h2><span class="badge" id="historyCount">0 partidas</span></div>
-  <div class="row history-tools"><label for="day">Dia</label><input type="date" id="day"><button class="secondary" id="today">Hoje</button></div>
+  <p id="historySync" class="muted" role="status">Conecte para buscar as partidas salvas na central.</p><div class="row history-tools"><label for="day">Dia</label><input type="date" id="day"><button class="secondary" id="today">Hoje</button><label><input type="checkbox" id="unknown" style="width:auto"> Sem data</label><button class="secondary" id="syncHistory" disabled>Buscar da central</button></div>
   <div class="row"><button class="secondary" id="png">Salvar imagem</button><button class="secondary" id="pdf">Salvar PDF</button></div>
   <p id="exportStatus" role="status" aria-live="polite" class="muted" style="font-size:13px"></p>
   <div id="exportPanel" hidden></div>
-  <p class="muted" style="font-size:12px">Salvo neste navegador e neste celular. Exporte antes de limpar os dados do navegador. Para registrar o resultado, mantenha o app conectado até o fim.</p>
-  <div id="active" class="notice" hidden></div><div id="history"></div>
+  <p class="muted" style="font-size:12px">Com o firmware atualizado, a central guarda as últimas 64 partidas sem precisar do celular conectado. Ao reconectar, o app importa os resultados e os mantém neste navegador. Exporte antes de limpar os dados do navegador.</p>
+  <div id="daySummary" class="notice" style="margin-bottom:12px"></div><div id="active" class="notice" hidden></div><div id="history"></div>
   <details><summary>Backup do histórico</summary><p class="muted" style="font-size:13px">O JSON permite restaurar o histórico em outro aparelho. Importar mescla os registros sem apagar os atuais.</p><div class="row"><button class="secondary" id="backup">Baixar backup</button><button class="secondary" id="restore">Importar backup</button><input hidden id="backupFile" type="file" accept="application/json,.json"></div></details>
 </section>
-<div class="footer">Datas e horários usam o fuso do celular. O histórico começa quando este app acompanha a central; ele não recupera partidas antigas da memória do ESP32.</div>
+<div class="footer">Datas e horários usam o fuso do celular. Conecte uma vez após ligar a central para acertar o relógio. Resultados sem referência de hora aparecem em “Sem data”. Uma partida cortada por falta de energia antes de terminar não é recuperada.</div>
 </main>
+<script src="historico.js"></script>
 <script>
 'use strict';
-// Sem dependências externas: publicar este index.html no GitHub Pages.
+// Sem serviços externos: publicar index.html e historico.js juntos em HTTPS.
 const SERVICE='4fafc201-1fb5-459e-8fcc-c5c9c331914b', RX='beb5483e-36e1-4688-b7f5-ea07361b26a8', TX='8a892b15-9776-464f-b6df-205105260b4a', HIST='8a892b15-9776-464f-b6df-205105260b4b';
 const STORAGE='overgrown.history.v1', VALID_STATES=[0,1,2,3,4,6,7];
 const $=id=>document.getElementById(id);
@@ -54,7 +55,7 @@ function message(text,error=false){$('message').textContent=text;$('message').cl
 function parsePacket(view){
   if(view.byteLength!==20) return null;
   const type=view.getUint8(0), id=view.getUint32(4,true);
-  if(type===2){const target=view.getUint32(8,true),pre=view.getUint32(12,true);return target>=60000&&target<=86400000&&pre>=60000&&pre<=86400000?{kind:'config',id,target,pre}:null;}
+  if(type===2){const target=view.getUint32(8,true),pre=view.getUint32(12,true);return target>=60000&&target<=10800000&&pre>=0&&pre<=10800000?{kind:'config',id,target,pre}:null;}
   if(type!==1||!VALID_STATES.includes(view.getUint8(1))||!VALID_STATES.includes(view.getUint8(2))||view.getUint8(3)>100) return null;
   return {kind:'score',id,state:view.getUint8(1),pausedFrom:view.getUint8(2),winner:view.getUint8(1)===4?({2:'amarelo',3:'azul'}[view.getUint8(2)]||null):null,brightness:view.getUint8(3),yellow:view.getUint32(8,true),blue:view.getUint32(12,true),remaining:view.getUint32(16,true),extended:true};
 }
@@ -81,6 +82,44 @@ function closeDraft(status){if(!store.draft)return;store.draft.status=status;sto
 let device=null,rx=null,tx=null,extended=false,connected=false,connecting=false,busy=false,last=null,lastAt=0,lastMono=0,config=null,pendingRestart=null;
 let legacyId=store.draft?.source==='legacy'?store.draft.id:null;
 let exportBusy=false, exportUrls=[];
+let serviceBLE=null,flashSupport=false,connectionEpoch=0,lastHistorySync=0;
+const endStamp=r=>r.dateUnknown?'Data desconhecida':stamp(r.endedAt||r.lastSeen);
+const dayTitle=()=>$('unknown').checked?'Sem data':$('day').value.split('-').reverse().join('/');
+
+async function syncHistory(){
+  if(!connected||!flashSupport||busy||!serviceBLE||!rx)return;
+  const epoch=connectionEpoch,service=serviceBLE,commandRX=rx;
+  busy=true;controls();$('historySync').textContent='Buscando resultados da central…';
+  try{
+    const data=await OvergrownHistory.sincronizar(service,commandRX);
+    if(epoch!==connectionEpoch||!connected)return;
+    const now=new Date().toISOString(),prefix=`central:flash:${data.identidade}:`;
+    let added=0;
+    const antigos=store.matches.filter(r=>r.source==='flash'&&r.id.startsWith(prefix));
+    const maior=antigos.reduce((n,r)=>Math.max(n,r.centralId||0),0);
+    const lacuna=data.maisAntigo>maior+1;
+    for(const r of data.registros){
+      const id=prefix+r.id,existing=store.matches.find(x=>x.id===id);
+      const start=r.inicioUnix?new Date(r.inicioUnix*1000).toISOString():null;
+      const end=r.fimUnix?new Date(r.fimUnix*1000).toISOString():null;
+      const item={id,centralId:r.id,bank:data.identidade,device:device.name||'OVERGROWN_PROP',source:'flash',
+        firstSeen:existing?.firstSeen||start||now,lastSeen:end||existing?.lastSeen||now,
+        startedAt:start,endedAt:end,dateUnknown:!end,yellow:r.amareloMs,blue:r.azulMs,target:r.metaMs,
+        duration:r.ativoMs,captures:r.capturas,reason:r.motivo,
+        status:r.motivo===1?'concluida':'interrompida',winner:r.vencedor===1?'amarelo':r.vencedor===2?'azul':null,gap:false};
+      if(!validRecord(item))throw Error('A central enviou um resultado inválido.');
+      if(!existing)added++;upsert(item);
+    }
+    // Um rascunho antigo fica preservado como parcial; não é convertido em vitória.
+    if(store.draft){closeDraft('incompleta');}
+    persist();renderHistory();lastHistorySync=Date.now();
+    $('historySync').textContent=`Sincronizado às ${new Date().toLocaleTimeString('pt-BR')}: ${added} novo(s), ${data.registros.length} disponível(is) na central.`+
+      (lacuna?' Há partidas antigas fora da capacidade de 64 registros; confira seus backups.':'')+
+      (data.gravaçãoPendente?' ATENÇÃO: gravação na flash pendente/indisponível; faça um backup.':'')+
+      (storageBlocked?' Os dados importados estão só na memória deste app. Baixe um backup.':'');
+  }catch(error){if(epoch===connectionEpoch){lastHistorySync=Date.now();$('historySync').textContent=`Falha na busca: ${error.message}. Use “Buscar da central” para tentar novamente.`;}}
+  finally{if(epoch===connectionEpoch){busy=false;controls();}}
+}
 function recordTelemetry(p,now=new Date().toISOString()){
   const deviceKey=device?.id||'central', deviceName=device?.name||'OVERGROWN_PROP';
   if(!p.extended){
@@ -107,33 +146,38 @@ function recordTelemetry(p,now=new Date().toISOString()){
 }
 function markGap(){if(store.draft){store.draft.gap=true;persist();renderHistory();}}
 function isFresh(){return connected&&last&&Date.now()-lastAt<4500;}
-function controls(){document.querySelectorAll('[data-control]').forEach(b=>b.disabled=!isFresh()||busy);$('connect').disabled=connecting||connected;}
-function disconnect(){connected=false;rx=null;tx=null;markGap();$('connection').textContent='Desconectado';$('connect').textContent='Reconectar à central';$('sync').textContent='Última leitura preservada. Reconecte para atualizar.';controls();renderLive();}
+function controls(){$('syncHistory').disabled=!connected||!flashSupport||busy;document.querySelectorAll('[data-control]').forEach(b=>b.disabled=!isFresh()||busy);if(last){$('start').disabled=!isFresh()||busy||![0,6,7].includes(last.state);document.querySelectorAll('[data-setting]').forEach(b=>{if(b.dataset.setting!=='B')b.disabled=!isFresh()||busy||last.state!==0;});}$('connect').disabled=connecting||connected;}
+function disconnect(){connectionEpoch++;serviceBLE=null;flashSupport=false;busy=false;connected=false;rx=null;tx?.removeEventListener('characteristicvaluechanged',telemetry);tx=null;markGap();$('connection').textContent='Desconectado';$('connect').textContent='Reconectar à central';$('sync').textContent='Última leitura preservada. Reconecte para atualizar.';controls();renderLive();}
 async function connect(){
   if(!navigator.bluetooth){message('Este navegador não oferece Web Bluetooth. Use um navegador compatível, como Chrome no Android, em HTTPS.',true);return;}
   connecting=true;controls();$('connection').textContent='Conectando…';
   try{
     device=await navigator.bluetooth.requestDevice({filters:[{name:'OVERGROWN_PROP'}],optionalServices:[SERVICE]});
     device.removeEventListener('gattserverdisconnected',disconnect);device.addEventListener('gattserverdisconnected',disconnect);
-    const server=await device.gatt.connect(), service=await server.getPrimaryService(SERVICE);
+    const server=await device.gatt.connect(), service=await server.getPrimaryService(SERVICE);serviceBLE=service;connectionEpoch++;
     rx=await service.getCharacteristic(RX);
-    const characteristics=await service.getCharacteristics();
+    const characteristics=await service.getCharacteristics();flashSupport=characteristics.some(c=>c.uuid.toLowerCase()===OvergrownHistory.UUID);
     tx=characteristics.find(c=>c.uuid.toLowerCase()===HIST);extended=!!tx;
     if(!tx)tx=await service.getCharacteristic(TX);
     last=null;lastAt=0;config=null;
     tx.addEventListener('characteristicvaluechanged',telemetry);
     await tx.startNotifications();connected=true;
     $('connection').textContent='Conectado';$('connect').textContent='Central conectada';
-    message(extended?'Conectado. Aguardando os dados da central…':'Firmware anterior: o placar e o histórico funcionam com limitações; a contagem regressiva exige o firmware que acompanha este app.');
+    message(flashSupport?'Conectado. Os resultados serão buscados da memória da central.':extended?'Conectado. Este firmware não oferece histórico persistente.':'Firmware anterior: contagem e histórico persistente indisponíveis.');
+    if(flashSupport)await syncHistory();else $('historySync').textContent='Firmware sem histórico persistente: mantenha o app conectado até o fim para registrar resultados.';
   }catch(error){device?.gatt?.disconnect();disconnect();message(`Não foi possível conectar: ${error.message}`,true);}
   finally{connecting=false;controls();}
 }
 function telemetry(event){
+  if(!connected)return;
   const p=extended?parsePacket(event.target.value):parseLegacy(new TextDecoder().decode(event.target.value));
   if(!p)return;
   if(p.kind==='config'){config=p;renderConfig();return;}
   if(lastAt&&Date.now()-lastAt>4500)markGap();
-  recordTelemetry(p);
+  const mudou=last && (p.state!==last.state||p.id!==last.id);
+  if(flashSupport){p.key=`${device.id}:live:${p.id}`;pendingRestart=null;}
+  else recordTelemetry(p);
+  if(flashSupport && mudou && [0,1,4].includes(p.state))setTimeout(()=>syncHistory(),700);
   last=p;lastAt=Date.now();lastMono=performance.now();renderLive();renderConfig();controls();
 }
 const names={0:'PRÉ-JOGO',1:'JOGO LIVRE',2:'DOMÍNIO AMARELO',3:'DOMÍNIO AZUL',4:'FIM DE JOGO',6:'JOGO PAUSADO',7:'INÍCIO IMINENTE'};
@@ -150,7 +194,7 @@ function renderLive(){
     const remaining=Math.max(0,last.remaining-elapsed);
     $('countdown').textContent=formatTime(Math.ceil(remaining/1000)*1000);
     $('countHint').textContent=!fresh?'Última leitura da central; contagem suspensa.':last.state===6?'Retome o jogo para continuar.':remaining===0?'Aguardando confirmação de início da central.':base===7?'Os dois times estão prontos.':'Pré-jogo em andamento.';
-  }else{$('countdown').textContent=last.state===4?'FIM':'EM JOGO';$('countHint').textContent=last.state===4?'Resultado salvo no histórico.':last.state===6?'Partida pausada.':'Os tempos abaixo vêm da central.';}
+  }else{$('countdown').textContent=last.state===4?'FIM':'EM JOGO';$('countHint').textContent=last.state===4?(flashSupport?'Resultado registrado pela central; sincronizando histórico.':'Resultado recebido pelo app.'):last.state===6?'Partida pausada.':'Os tempos abaixo vêm da central.';}
   controls();
 }
 function renderConfig(){
@@ -160,15 +204,15 @@ function renderConfig(){
 async function send(payload){
   if(!isFresh()||!rx){message('Conecte à central e aguarde uma leitura atualizada.',true);return false;}
   if(busy)return false;
-  busy=true;controls();
-  try{await rx.writeValueWithResponse(new TextEncoder().encode(payload));message('Comando enviado. Aguarde a atualização da central.');return true;}
-  catch(error){message(`Falha ao enviar: ${error.message}`,true);return false;}
-  finally{busy=false;controls();}
+  const epoch=connectionEpoch;busy=true;controls();
+  try{await rx.writeValueWithResponse(new TextEncoder().encode(payload));if(epoch!==connectionEpoch)return false;message('Comando enviado. Aguarde a atualização da central.');return true;}
+  catch(error){if(epoch===connectionEpoch)message(`Falha ao enviar: ${error.message}`,true);return false;}
+  finally{if(epoch===connectionEpoch){busy=false;controls();}}
 }
-async function setting(prefix){const id={V:'victory',P:'pregame',B:'brightness'}[prefix],input=$(id);if(!input.reportValidity())return;const n=Number(input.value);if(!Number.isInteger(n)||n<1||n>(prefix==='B'?100:1440))return;await send(`${prefix},${n}`);}
-function selectedRecords(){return store.matches.filter(r=>localDay(r.endedAt||r.lastSeen)===$('day').value).sort((a,b)=>Date.parse(a.endedAt||a.lastSeen)-Date.parse(b.endedAt||b.lastSeen));}
+async function setting(prefix){const id={V:'victory',P:'pregame',B:'brightness'}[prefix],input=$(id);if(!input.reportValidity())return;const n=Number(input.value);if(!Number.isInteger(n)||n<(prefix==='P'?0:1)||n>(prefix==='B'?100:180))return;if(prefix!=='B'&&last?.state!==0){message('Altere os tempos durante o pré-jogo.',true);return;}await send(`${prefix},${n}`);}
+function selectedRecords(){return store.matches.filter(r=>$('unknown').checked?Boolean(r.dateUnknown):!r.dateUnknown&&localDay(r.endedAt||r.lastSeen)===$('day').value).sort((a,b)=>Date.parse(a.endedAt||a.lastSeen)-Date.parse(b.endedAt||b.lastSeen));}
 function result(r){if(r.status!=='concluida')return r.status==='interrompida'?'Interrompida · último placar':'Resultado final não recebido';if(['amarelo','azul'].includes(r.winner))return `Vitória do ${r.winner}`;return r.yellow===r.blue?'Empate':r.yellow>r.blue?'Vitória do amarelo':'Vitória do azul';}
-function observation(r){return [!r.startedAt?'Início não acompanhado':null,r.gap?'Acompanhamento parcial':null,r.source==='legacy'?'Firmware anterior: identificação aproximada':null].filter(Boolean).join(' · ');}
+function observation(r){return [r.source==='flash'?'Recuperado da central':null,r.dateUnknown?'Central sem referência de data':null,!r.startedAt&&!r.dateUnknown?'Início não acompanhado':null,r.gap?'Acompanhamento parcial':null,r.source==='legacy'?'Firmware anterior: identificação aproximada':null].filter(Boolean).join(' · ');}
 function element(tag,text,cls){const e=document.createElement(tag);e.textContent=text;if(cls)e.className=cls;return e;}
 function renderHistory(){
   const list=selectedRecords(), host=$('history');host.replaceChildren();$('historyCount').textContent=`${list.length} partida${list.length===1?'':'s'}`;
@@ -176,11 +220,15 @@ function renderHistory(){
   if(!list.length)host.append(element('div','Nenhuma partida registrada neste dia.','empty'));
   for(const [i,r] of [...list].reverse().entries()){
     const article=element('article','','match');
-    article.append(element('span',r.status==='concluida'?'RESULTADO FINAL':'REGISTRO PARCIAL','pill'),element('h3',result(r)),element('small',`${r.device} · ${stamp(r.endedAt||r.lastSeen)}`));
-    const score=element('div','','scoreline');score.append(element('span',`AM ${formatTime(r.yellow)}`,'yellow'),document.createTextNode('  ×  '),element('span',`AZ ${formatTime(r.blue)}`,'blue'));article.append(score,element('small',`Início: ${r.startedAt?stamp(r.startedAt):'não acompanhado'} · ${r.status==='concluida'?'Fim':'Última leitura'}: ${stamp(r.endedAt||r.lastSeen)}`));
+    article.append(element('span',r.status==='concluida'?'RESULTADO FINAL':'REGISTRO PARCIAL','pill'),element('h3',result(r)),element('small',`${r.device} · ${endStamp(r)}`));
+    const score=element('div','','scoreline');score.append(element('span',`AM ${formatTime(r.yellow)}`,'yellow'),document.createTextNode('  ×  '),element('span',`AZ ${formatTime(r.blue)}`,'blue'));article.append(score,element('small',`Início: ${r.startedAt?stamp(r.startedAt):r.dateUnknown?'data desconhecida':'não acompanhado'} · ${r.status==='concluida'?'Fim':'Última leitura'}: ${endStamp(r)}`));
     if(observation(r))article.append(element('small',observation(r)));host.append(article);
   }
-  $('active').hidden=!store.draft;
+  const wins=list.filter(r=>r.status==='concluida');
+  const am=wins.filter(r=>r.winner==='amarelo'||(!r.winner&&r.yellow>r.blue)).length;
+  const az=wins.filter(r=>r.winner==='azul'||(!r.winner&&r.blue>r.yellow)).length;
+  $('daySummary').textContent=`${wins.length} concluída(s) · vitórias AM ${am} / AZ ${az} · ${list.length-wins.length} parcial(is). Domínio total: AM ${formatTime(list.reduce((n,r)=>n+r.yellow,0))} / AZ ${formatTime(list.reduce((n,r)=>n+r.blue,0))}.`;
+  $('active').hidden=flashSupport||!store.draft;
   if(store.draft)$('active').textContent=`Partida em acompanhamento · amarelo ${formatTime(store.draft.yellow)} × azul ${formatTime(store.draft.blue)}. O resultado será registrado quando a central informar o fim.`;
 }
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
@@ -190,12 +238,16 @@ function reportPages(records){
     const canvas=document.createElement('canvas');canvas.width=1240;canvas.height=1754;const c=canvas.getContext('2d');
     c.fillStyle='#f7f7f0';c.fillRect(0,0,1240,1754);c.fillStyle='#27371c';c.fillRect(0,0,1240,220);
     c.fillStyle='#c3d69a';c.font='bold 20px sans-serif';c.fillText('DOMINAÇÃO · RELATÓRIO DE CAMPO',64,60);c.fillStyle='#fff';c.font='bold 46px sans-serif';c.fillText('OVERGROWN',64,120);
-    c.font='24px sans-serif';c.fillText(`Dia ${$('day').value.split('-').reverse().join('/')}  ·  ${records.length} partida(s)`,64,172);
+    c.font='24px sans-serif';c.fillText(`Dia ${dayTitle()}  ·  ${records.length} partida(s)`,64,172);
+    const finais=records.filter(r=>r.status==='concluida');
+    const winAM=finais.filter(r=>r.winner==='amarelo'||(!r.winner&&r.yellow>r.blue)).length;
+    const winAZ=finais.filter(r=>r.winner==='azul'||(!r.winner&&r.blue>r.yellow)).length;
+    c.font='18px sans-serif';c.fillText(`Vitórias AM ${winAM} / AZ ${winAZ}  |  ${records.length-finais.length} parcial(is)  |  Domínio AM ${formatTime(records.reduce((n,r)=>n+r.yellow,0))} / AZ ${formatTime(records.reduce((n,r)=>n+r.blue,0))}`,64,205);
     let y=270;
     for(const r of items){
       c.fillStyle='#fff';c.fillRect(48,y-22,1144,184);c.strokeStyle='#d4d9cb';c.strokeRect(48,y-22,1144,184);
       c.fillStyle='#25331c';c.font='bold 24px sans-serif';c.fillText(result(r),68,y+12);
-      c.fillStyle='#536049';c.font='18px sans-serif';c.fillText(`${r.status==='concluida'?'Fim':'Última leitura'}: ${stamp(r.endedAt||r.lastSeen)}  |  Início: ${r.startedAt?stamp(r.startedAt):'não acompanhado'}`,68,y+44);
+      c.fillStyle='#536049';c.font='18px sans-serif';c.fillText(`${r.status==='concluida'?'Fim':'Última leitura'}: ${endStamp(r)}  |  Início: ${r.startedAt?stamp(r.startedAt):r.dateUnknown?'data desconhecida':'não acompanhado'}`,68,y+44);
       c.font='bold 32px monospace';c.fillStyle='#8c6500';c.fillText(`AMARELO ${formatTime(r.yellow)}`,68,y+91);c.fillStyle='#205c80';c.fillText(`AZUL ${formatTime(r.blue)}`,660,y+91);
       c.fillStyle='#536049';c.font='17px sans-serif';c.fillText(observation(r)||'Resultado recebido da central.',68,y+130);y+=198;
     }
@@ -224,11 +276,11 @@ async function exportReport(type){
   const records=selectedRecords(),panel=$('exportPanel');
   panel.replaceChildren();panel.hidden=true;
   exportUrls.forEach(url=>URL.revokeObjectURL(url));exportUrls=[];
-  if(!records.length){$('exportStatus').textContent='Não há partidas registradas neste dia. Escolha outro dia ou acompanhe uma partida até o fim. A partida em andamento ainda não entra no relatório.';return;}
+  if(!records.length){$('exportStatus').textContent='Não há partidas registradas neste dia. Escolha outro dia ou busque os resultados da central. A partida em andamento ainda não entra no relatório.';return;}
   exportBusy=true;$('png').disabled=$('pdf').disabled=true;
   $('exportStatus').textContent='Preparando relatório…';
   try{
-    const pages=reportPages(records),base=`overgrown-${$('day').value}`;
+    const pages=reportPages(records),base=`overgrown-${$('unknown').checked?'sem-data':$('day').value}`;
     const files=type==='pdf'?[await makePDF(pages)]:await Promise.all(pages.map(page=>canvasBlob(page)));
     for(let i=0;i<files.length;i++){
       const url=URL.createObjectURL(files[i]);exportUrls.push(url);
@@ -253,10 +305,10 @@ async function exportReport(type){
 $('connect').onclick=connect;
 document.querySelectorAll('[data-setting]').forEach(b=>b.onclick=()=>setting(b.dataset.setting));
 $('pause').onclick=()=>send('Z');
-async function restart(command){pendingRestart={command,key:last?.key,until:Date.now()+10000};if(!await send(command))pendingRestart=null;}
+async function restart(command){pendingRestart={command,key:last?.key,until:Date.now()+10000};if(!await send(command))pendingRestart=null;else if(flashSupport)setTimeout(()=>syncHistory(),700);}
 $('start').onclick=()=>{if(confirm('Iniciar agora? A central zera o placar ao iniciar.'))restart('I');};
 $('reset').onclick=()=>{if(confirm('Reiniciar para o pré-jogo? O último placar acompanhado será preservado no histórico.'))restart('R');};
-$('day').value=localDay(Date.now());$('day').onchange=renderHistory;$('today').onclick=()=>{$('day').value=localDay(Date.now());renderHistory();};
+$('day').value=localDay(Date.now());$('day').onchange=()=>{$('unknown').checked=false;renderHistory();};$('unknown').onchange=renderHistory;$('syncHistory').onclick=()=>syncHistory();$('today').onclick=()=>{$('unknown').checked=false;$('day').value=localDay(Date.now());renderHistory();};
 $('png').onclick=()=>exportReport('png');$('pdf').onclick=()=>exportReport('pdf');
 $('backup').onclick=()=>download(new Blob([JSON.stringify(store,null,2)],{type:'application/json'}),`overgrown-backup-${localDay(Date.now())}.json`);
 $('restore').onclick=()=>$('backupFile').click();
@@ -271,6 +323,7 @@ $('backupFile').onchange=async event=>{
   }catch(error){message(`Não foi possível importar: ${error.message}`,true);}event.target.value='';
 };
 document.addEventListener('visibilitychange',()=>{if(document.hidden)markGap();else renderLive();});
+setInterval(()=>{if(connected&&flashSupport&&Date.now()-lastHistorySync>30000)syncHistory();},5000);
 setInterval(renderLive,250);renderHistory();controls();
 </script>
 </body>
