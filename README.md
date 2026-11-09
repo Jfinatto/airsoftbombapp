@@ -1,37 +1,32 @@
-# App Overgrown atualizado
+# Overgrown — Jogo, Relatórios e Testes
 
-Publique **index.html e historico.js juntos na mesma pasta**. Não há instalação, build nem backend. O endereço deve usar HTTPS para Web Bluetooth. Se usar GitHub Pages, substitua/adicone esses dois arquivos na raiz publicada do repositório; se usar outra cloud estática, publique o conteúdo desta pasta. Nenhuma publicação foi feita por esta entrega.
+Publique **index.html e historico.js juntos** no GitHub Pages. É um site estático, sem instalação nem build. Use HTTPS e navegador compatível com Web Bluetooth.
 
-A versão compatível da central está no pacote de firmware desta entrega, em `Overgrown_ESP32/Central/Central.ino`. Use ESP32 Dev Module, core Espressif 3.3.11 e partição Huge APP (3MB). As periféricas já gravadas permanecem compatíveis.
+## Versão de 09/11/2026
 
-## O que mudou
+- **Jogo:** placar e controles essenciais da partida.
+- **Relatórios:** busca do histórico, resumo por dia e imagens PNG. Sem PDF nem download JSON; importação de backup antigo preservada.
+- **Testes:** oito saídas individuais, botões/diagnóstico, brilho e ajuste do pulso da principal.
+- **Silenciar todos os sons:** corta sirenes e buzzers, inclusive em andamento. A seleção permanece salva após desligar.
 
-- Busca automática dos registros na flash ao conectar, botão “Buscar da central” e nova busca nas transições relevantes e a cada 30 s enquanto conectado.
-- Sincronização de hora ao conectar/buscar. A central pode ficar sem o celular durante as partidas.
-- Resultados importados alimentam a mesma lista, o backup JSON e as exportações PNG/PDF. IDs do banco + partida evitam duplicação após reconexão, nova importação e restauração em outro celular.
-- Registros antigos do navegador são mantidos. Registros aproximados do firmware antigo não são fundidos automaticamente com os da flash: não é possível garantir a correspondência.
-- Filtro “Sem data” para jogos encerrados antes de a central ter referência de horário. Eles não são atribuídos artificialmente ao dia da sincronização.
-- Resumo diário de vitórias e tempos de domínio na tela e no cabeçalho dos relatórios. Interrupções são identificadas como parciais.
-- Contagem de pré-jogo/15 s e pausa vêm da telemetria da central. Meta, pré-jogo e brilho têm confirmação de leitura.
-- Limites alinhados: meta 1–180 min, pré-jogo 0–180 min e brilho 1–100%. Tempos editáveis apenas no pré-jogo.
-- Falhas na leitura, na flash da central ou no armazenamento do navegador são informadas. Comandos e sincronização não disputam operações GATT no app.
+Entre no modo teste durante o pré-jogo. A contagem fica congelada. Componentes desativados não são acionados pelos testes. Use “Voltar ao jogo” para retomar.
 
-## Uso
+O app precisa da nova versão nas **três ESP32**. A apresentação das periféricas foi preservada. A central agora deixa os 10 pixels inferiores vazios por causa do aço.
 
-1. Grave o firmware atualizado na central.
-2. Abra o app publicado e conecte uma vez no começo do evento, para enviar a hora e buscar registros existentes.
-3. O celular pode desconectar durante o jogo. A central guarda as últimas 64 partidas encerradas, inclusive interrupções por reset/início forçado.
-4. Reconecte e aguarde a mensagem de sincronização. Escolha o dia para ver/exportar o relatório. Os horários e o agrupamento usam o fuso do celular.
-5. Faça backup do navegador, principalmente antes de mudar de domínio/cloud: o armazenamento local pertence ao endereço do site. Importe o JSON no endereço novo para recuperar os dados que já não estiverem entre os 64 da central.
+## Relatórios em imagem
 
-Não habilite “Erase All Flash” ao atualizar firmware se quiser preservar os resultados gravados. A central não tem RTC com bateria: após desligar, conecte novamente para acertar a hora. Uma partida interrompida por falta de energia antes de seu encerramento não é recuperada; os resultados já gravados permanecem. Sincronize antes de exceder 64 partidas sem coleta.
+Selecione um dia com partidas em Relatórios. As imagens são preparadas automaticamente. Use “Salvar / compartilhar imagem” ou “Baixar PNG”. Os downloads podem ficar em Downloads, e não na galeria. Há prévia que pode ser mantida pressionada no celular e link para abrir. Relatórios longos são divididos em páginas.
 
-## Validação
+O compartilhamento nativo aparece quando suportado. O download direto não depende dele. As imagens são geradas localmente.
 
-O firmware final compilou no core 3.3.11: 1.820.827 bytes de programa (57% da Huge APP) e 69.604 bytes de RAM global (21%).
+## Dados
 
-O JavaScript foi executado em ambiente de teste com DOM, armazenamento e BLE simulados: leitura em várias páginas, preservação de histórico antigo, deduplicação em reconexão/outro celular, backup importado, interrupções, filtro sem data, resumo diário, contagem de 15 segundos, pré-jogo zero, fluxo de exportação e tratamento de falha de armazenamento. Nos testes de exportação, o canvas foi simulado; isso valida o fluxo e a construção do PDF, não a aparência visual do arquivo.
+O histórico existente do navegador é preservado. A central mantém um buffer circular de até 64 partidas recentes; somente resultados datados sobrevivem ao desligamento. Conecte uma vez após ligar para enviar hora/fuso, e o celular pode desconectar durante as partidas. O placar de vitórias do OLED zera ao ligar e na virada do dia, separadamente do histórico.
 
-Ainda falta testar o conjunto com a central física, o navegador/celular e a persistência após desligar. O app não foi publicado nem o novo firmware gravado automaticamente.
+As regras completas estão em `Overgrown_ESP32/ATUALIZACAO_09_NOV.md` no pacote completo. Não habilite “Erase All Flash” ao atualizar se quiser preservar o histórico.
 
-Referência para HTTPS e compatibilidade do Web Bluetooth: https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API
+## Verificações
+
+Testado em Chrome real com BLE simulado, em largura de celular e desktop: todos os botões de teste, controles de saídas, pulso, silêncio, busca, armazenamento e erros. PNGs foram baixados e abertos como imagens reais. Compartilhamento verificado com arquivo pronto e gesto ativo, usando destino simulado. Ainda falta testar no equipamento e celular físicos.
+
+As prévias `previa-jogo.png` e `previa-testes.png` são capturas do navegador com dados simulados. Esta entrega não publica o site nem grava placas automaticamente.

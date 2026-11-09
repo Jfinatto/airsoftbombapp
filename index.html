@@ -8,6 +8,8 @@
 <style>
 :root{color-scheme:dark;--bg:#151b13;--card:#232b1e;--line:#435139;--text:#edf0e6;--muted:#b3bea7;--green:#a5bf64;--yellow:#f1cf65;--blue:#87c9e8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}main{max-width:820px;margin:auto;padding:24px 16px 50px}h1{font-size:27px;letter-spacing:2px;margin:0}h2{font-size:20px;margin:0 0 14px}h3{font-size:16px;margin:0}p{margin:8px 0}header{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:20px}.brand{font-size:11px;letter-spacing:3px;color:var(--green);font-weight:800}.badge{font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:20px;color:var(--muted)}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}.muted,small{color:var(--muted)}small{display:block;font-size:12px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.grow{flex:1}.status{text-align:center;font-weight:800;letter-spacing:1px;padding:10px;border-bottom:1px solid var(--line)}.countdown{text-align:center;margin:20px 0}.countdown strong{display:block;font:700 44px/1.3 ui-monospace,monospace;letter-spacing:2px}.scores{display:grid;grid-template-columns:1fr 1fr;gap:12px}.score{padding:16px 6px;text-align:center;border:1px solid currentColor;border-radius:10px}.score strong{display:block;font:700 32px ui-monospace,monospace;margin-top:8px}.yellow{color:var(--yellow)}.blue{color:var(--blue)}button,input{font:inherit;border-radius:8px}button{cursor:pointer;background:var(--green);color:#19220f;border:1px solid transparent;padding:12px 16px;font-weight:750}button.secondary{background:transparent;color:var(--text);border-color:var(--line)}button.danger{background:#863d2e;color:#fff}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}input{min-width:0;background:#151b13;color:var(--text);border:1px solid var(--line);padding:10px;width:100%}input[type=date]{width:auto;max-width:100%}.field{display:grid;grid-template-columns:1fr 90px 80px;gap:10px;align-items:center;margin:16px 0}.field label{font-size:14px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.actions button:first-child{grid-column:1/-1}.notice{border-left:3px solid var(--green);padding:10px 12px;background:#1c2418;font-size:13px;margin-top:12px}.error{border-color:#ec997c;color:#ffd2c2}#message:empty{display:none}.match{border-top:1px solid var(--line);padding:16px 0}.match:last-child{padding-bottom:0}.match .scoreline{font:700 21px ui-monospace,monospace;margin:10px 0}.pill{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--green)}.empty{padding:26px 0;color:var(--muted);text-align:center}.history-tools{margin-bottom:16px}.footer{font-size:12px;margin-top:24px;color:var(--muted)}details{margin-top:16px}summary{cursor:pointer;font-weight:700}a{color:var(--green)}@media(max-width:430px){main{padding:18px 12px}header{align-items:flex-start}.card{padding:16px}.field{grid-template-columns:1fr 72px 70px;gap:6px}.field button{padding:10px 6px}.score strong{font-size:28px}h1{font-size:23px}.badge{font-size:10px}.row button{flex:1}}
+
+[hidden]{display:none!important}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;position:sticky;top:0;z-index:10;background:#151b13;padding:10px 0 14px}.tabs button{background:#232b1e;color:var(--muted);border:1px solid var(--line)}.tabs button[aria-selected=true]{background:var(--green);color:#19220f}.session-strip{margin:2px 0 18px}.warning{color:var(--yellow);border-color:var(--yellow)}.component-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}.component{border:1px solid var(--line);border-radius:10px;padding:15px;background:#1b2317}.component h3{font-size:15px}.component small{min-height:40px;margin:8px 0}.component button{width:100%}.switch{display:flex;align-items:center;gap:6px;font-size:12px}.switch input{width:20px;height:20px;accent-color:var(--green)}.image-card{padding:16px 0;border-top:1px solid var(--line)}.image-card img{display:block;width:100%;max-width:600px;height:auto;margin:15px auto;border-radius:8px}.button{display:inline-block;padding:12px 16px;border-radius:8px;background:var(--green);color:#19220f;text-decoration:none;font-weight:750}.button.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}#testResult{min-height:28px}#buttonsLive{font-family:ui-monospace,monospace;font-size:13px}#message{margin-bottom:16px}.card>h2{margin-bottom:12px}@media(max-width:560px){.component-grid{grid-template-columns:1fr}.tabs button{padding:12px 6px}.component small{min-height:0}.row .button{flex:1;text-align:center}}
 </style>
 </head>
 <body>
@@ -15,7 +17,9 @@
 <header><div><div class="brand">CONTROLE DE CAMPO</div><h1>OVERGROWN</h1><small>Dominação · central de jogo</small></div><span class="badge" id="connection">Desconectado</span></header>
 <button id="connect" style="width:100%;margin-bottom:16px">Conectar à central</button>
 <div id="message" role="status" aria-live="polite" class="notice"></div>
-<section class="card" aria-label="Partida ao vivo">
+<nav class="tabs" role="tablist" aria-label="Seções do controle"><button role="tab" data-tab="jogo" aria-controls="tab-jogo" aria-selected="true">Jogo</button><button role="tab" data-tab="relatorios" aria-controls="tab-relatorios" aria-selected="false">Relatórios</button><button role="tab" data-tab="testes" aria-controls="tab-testes" aria-selected="false">Testes</button></nav>
+<div class="session-strip"><span id="soundState" class="badge">Som: aguardando central</span></div>
+<section id="tab-jogo" role="tabpanel"><section class="card" aria-label="Partida ao vivo">
   <div class="status" id="state">AGUARDANDO CENTRAL</div>
   <div class="countdown"><small id="countLabel">Contagem regressiva de início</small><strong id="countdown">--:--</strong><small id="countHint">Conecte para acompanhar a partida.</small></div>
   <div class="scores"><div class="score yellow">AMARELO<strong id="yellow">00:00</strong></div><div class="score blue">AZUL<strong id="blue">00:00</strong></div></div>
@@ -26,19 +30,33 @@
 <section class="card"><h2>Configurações da central</h2>
   <div class="field"><label for="victory">Vitória (minutos)<small id="victoryEcho">Central: —</small></label><input id="victory" type="number" min="1" max="180" step="1" value="15"><button data-control data-setting="V" disabled>Enviar</button></div>
   <div class="field"><label for="pregame">Pré-jogo (minutos)<small id="pregameEcho">Central: —</small></label><input id="pregame" type="number" min="0" max="180" step="1" value="10"><button data-control data-setting="P" disabled>Enviar</button></div>
-  <div class="field"><label for="brightness">Brilho (%)<small id="brightnessEcho">Central: —</small></label><input id="brightness" type="number" min="1" max="100" step="1" value="100"><button data-control data-setting="B" disabled>Enviar</button></div>
+
   <small>Tempos podem ser alterados no pré-jogo. A confirmação aparece em “Central”.</small>
 </section>
-<section class="card"><div class="row between"><h2>Histórico de partidas</h2><span class="badge" id="historyCount">0 partidas</span></div>
+</section><section id="tab-relatorios" role="tabpanel" hidden><section class="card"><div class="row between"><h2>Histórico de partidas</h2><span class="badge" id="historyCount">0 partidas</span></div>
   <p id="historySync" class="muted" role="status">Conecte para buscar as partidas salvas na central.</p><div class="row history-tools"><label for="day">Dia</label><input type="date" id="day"><button class="secondary" id="today">Hoje</button><label><input type="checkbox" id="unknown" style="width:auto"> Sem data</label><button class="secondary" id="syncHistory" disabled>Buscar da central</button></div>
-  <div class="row"><button class="secondary" id="png">Salvar imagem</button><button class="secondary" id="pdf">Salvar PDF</button></div>
+  <div class="row"><button id="png" disabled>Salvar / compartilhar imagem</button><button class="secondary" id="regenerate">Gerar novamente</button></div>
   <p id="exportStatus" role="status" aria-live="polite" class="muted" style="font-size:13px"></p>
   <div id="exportPanel" hidden></div>
   <p class="muted" style="font-size:12px">Com o firmware atualizado, a central guarda as últimas 64 partidas sem precisar do celular conectado. Ao reconectar, o app importa os resultados e os mantém neste navegador. Exporte antes de limpar os dados do navegador.</p>
   <div id="daySummary" class="notice" style="margin-bottom:12px"></div><div id="active" class="notice" hidden></div><div id="history"></div>
-  <details><summary>Backup do histórico</summary><p class="muted" style="font-size:13px">O JSON permite restaurar o histórico em outro aparelho. Importar mescla os registros sem apagar os atuais.</p><div class="row"><button class="secondary" id="backup">Baixar backup</button><button class="secondary" id="restore">Importar backup</button><input hidden id="backupFile" type="file" accept="application/json,.json"></div></details>
+  <details><summary>Importar histórico antigo</summary><p class="muted" style="font-size:13px">Você pode importar um backup JSON das versões anteriores. Os registros são mesclados sem apagar os atuais. Os relatórios desta versão são exportados somente como imagem.</p><div class="row"><button class="secondary" id="restore">Importar backup</button><input hidden id="backupFile" type="file" accept="application/json,.json"></div></details>
 </section>
-<div class="footer">Datas e horários usam o fuso do celular. Conecte uma vez após ligar a central para acertar o relógio. Resultados sem referência de hora aparecem em “Sem data”. Uma partida cortada por falta de energia antes de terminar não é recuperada.</div>
+</section><section id="tab-testes" role="tabpanel" hidden><section class="card"><div class="row between"><h2>Testes e componentes</h2><span class="badge">BANCADA</span></div>
+<p id="hardwareNotice" class="notice" role="status">Conecte a central para configurar e testar.</p>
+<p class="muted">Entre no modo teste durante o pré-jogo. A contagem fica congelada, e cada acionamento termina sozinho. Ative apenas o componente que quiser testar.</p>
+<div class="row"><button id="enterTests" disabled>Entrar no modo teste</button><button id="leaveTests" class="secondary" disabled>Voltar ao jogo</button><button id="stopTests" class="danger" disabled>Parar saídas</button></div>
+<p id="testResult" role="status" class="muted">Nenhum teste em andamento.</p></section>
+<section class="card"><h2>Saídas e modo silencioso</h2><p class="muted">Desativar corta também os sons em andamento. A configuração fica salva na central após desligar.</p>
+<div class="row"><button id="silent" disabled>Silenciar todos os sons</button><button id="enableAll" class="secondary" disabled>Ativar todos os componentes</button></div>
+<small id="enabledSummary">Aguardando configuração da central.</small><div id="components" class="component-grid"></div></section>
+<section class="card"><h2>Ajuste do bipe</h2><p class="muted">Bipes da sirene principal: começam a cada 5 s e aceleram no fim da contagem. Durante domínio: um a cada 5 s.</p>
+<div class="field"><label for="pulse">Pulso do bipe (ms)<small id="pulseEcho">Central: —</small></label><input id="pulse" type="number" min="10" max="300" step="5" value="30"><button id="savePulse" disabled>Aplicar</button></div>
+<small>Comece com 30 ms. O menor toque audível depende do relé e da sirene; aumente se não houver som. Faixa: 10 a 300 ms.</small>
+  <div class="field"><label for="brightness">Brilho (%)<small id="brightnessEcho">Central: —</small></label><input id="brightness" type="number" min="1" max="100" step="1" value="100"><button data-control data-setting="B" disabled>Enviar</button></div></section>
+<section class="card"><h2>Botões e diagnóstico</h2><p class="muted">Mantenha cada botão físico pressionado para conferir a leitura. No modo teste, isso não inicia a partida.</p>
+<div class="row"><button class="secondary" data-test="5" data-target="0" disabled>Verificar botões da central</button><button class="secondary" data-test="3" data-target="1" disabled>Verificar botão amarelo</button><button class="secondary" data-test="3" data-target="2" disabled>Verificar botão azul</button></div>
+<p id="buttonsLive">Aguardando leituras.</p><small id="linksLive">Aguardando maletas.</small><small id="oledLive">Aguardando telas.</small></section></section><div class="footer">Datas e horários usam o fuso do celular. Conecte uma vez após ligar a central para acertar o relógio. Resultados sem referência de hora aparecem em “Sem data”. Uma partida cortada por falta de energia antes de terminar não é recuperada.</div>
 </main>
 <script src="historico.js"></script>
 <script>
@@ -55,6 +73,7 @@ function message(text,error=false){$('message').textContent=text;$('message').cl
 function parsePacket(view){
   if(view.byteLength!==20) return null;
   const type=view.getUint8(0), id=view.getUint32(4,true);
+  if(type===3)return {kind:'hardware',mask:view.getUint8(1),mode:!!view.getUint8(2),online:view.getUint8(3),testId:id,pulse:view.getUint32(8,true),inputs:view.getUint32(12,true),result:view.getUint32(16,true)};
   if(type===2){const target=view.getUint32(8,true),pre=view.getUint32(12,true);return target>=60000&&target<=10800000&&pre>=0&&pre<=10800000?{kind:'config',id,target,pre}:null;}
   if(type!==1||!VALID_STATES.includes(view.getUint8(1))||!VALID_STATES.includes(view.getUint8(2))||view.getUint8(3)>100) return null;
   return {kind:'score',id,state:view.getUint8(1),pausedFrom:view.getUint8(2),winner:view.getUint8(1)===4?({2:'amarelo',3:'azul'}[view.getUint8(2)]||null):null,brightness:view.getUint8(3),yellow:view.getUint32(8,true),blue:view.getUint32(12,true),remaining:view.getUint32(16,true),extended:true};
@@ -87,7 +106,7 @@ const endStamp=r=>r.dateUnknown?'Data desconhecida':stamp(r.endedAt||r.lastSeen)
 const dayTitle=()=>$('unknown').checked?'Sem data':$('day').value.split('-').reverse().join('/');
 
 async function syncHistory(){
-  if(!connected||!flashSupport||busy||!serviceBLE||!rx)return;
+  if(!connected||!flashSupport||busy||hardwareWaiting||!serviceBLE||!rx)return;
   const epoch=connectionEpoch,service=serviceBLE,commandRX=rx;
   busy=true;controls();$('historySync').textContent='Buscando resultados da central…';
   try{
@@ -146,8 +165,8 @@ function recordTelemetry(p,now=new Date().toISOString()){
 }
 function markGap(){if(store.draft){store.draft.gap=true;persist();renderHistory();}}
 function isFresh(){return connected&&last&&Date.now()-lastAt<4500;}
-function controls(){$('syncHistory').disabled=!connected||!flashSupport||busy;document.querySelectorAll('[data-control]').forEach(b=>b.disabled=!isFresh()||busy);if(last){$('start').disabled=!isFresh()||busy||![0,6,7].includes(last.state);document.querySelectorAll('[data-setting]').forEach(b=>{if(b.dataset.setting!=='B')b.disabled=!isFresh()||busy||last.state!==0;});}$('connect').disabled=connecting||connected;}
-function disconnect(){connectionEpoch++;serviceBLE=null;flashSupport=false;busy=false;connected=false;rx=null;tx?.removeEventListener('characteristicvaluechanged',telemetry);tx=null;markGap();$('connection').textContent='Desconectado';$('connect').textContent='Reconectar à central';$('sync').textContent='Última leitura preservada. Reconecte para atualizar.';controls();renderLive();}
+function controls(){$('syncHistory').disabled=!connected||!flashSupport||busy||hardwareWaiting;document.querySelectorAll('[data-control]').forEach(b=>b.disabled=!isFresh()||busy||hardwareWaiting);if(last){$('start').disabled=!isFresh()||busy||hardwareWaiting||![0,6,7].includes(last.state);document.querySelectorAll('[data-setting]').forEach(b=>{if(b.dataset.setting!=='B')b.disabled=!isFresh()||busy||hardwareWaiting||last.state!==0;});}$('connect').disabled=connecting||connected;hardwareControls();}
+function disconnect(){hardware=null;hardwareWaiting=false;connectionEpoch++;serviceBLE=null;flashSupport=false;busy=false;connected=false;rx=null;tx?.removeEventListener('characteristicvaluechanged',telemetry);tx=null;markGap();$('connection').textContent='Desconectado';$('connect').textContent='Reconectar à central';$('sync').textContent='Última leitura preservada. Reconecte para atualizar.';controls();renderHardware();renderLive();}
 async function connect(){
   if(!navigator.bluetooth){message('Este navegador não oferece Web Bluetooth. Use um navegador compatível, como Chrome no Android, em HTTPS.',true);return;}
   connecting=true;controls();$('connection').textContent='Conectando…';
@@ -172,6 +191,7 @@ function telemetry(event){
   if(!connected)return;
   const p=extended?parsePacket(event.target.value):parseLegacy(new TextDecoder().decode(event.target.value));
   if(!p)return;
+  if(p.kind==='hardware'){hardware=p;hardwareRevision++;renderHardware();return;}
   if(p.kind==='config'){config=p;renderConfig();return;}
   if(lastAt&&Date.now()-lastAt>4500)markGap();
   const mudou=last && (p.state!==last.state||p.id!==last.id);
@@ -216,7 +236,7 @@ function observation(r){return [r.source==='flash'?'Recuperado da central':null,
 function element(tag,text,cls){const e=document.createElement(tag);e.textContent=text;if(cls)e.className=cls;return e;}
 function renderHistory(){
   const list=selectedRecords(), host=$('history');host.replaceChildren();$('historyCount').textContent=`${list.length} partida${list.length===1?'':'s'}`;
-  $('png').disabled=$('pdf').disabled=exportBusy;
+  $('png').disabled=exportBusy||!reportBundle.length;
   if(!list.length)host.append(element('div','Nenhuma partida registrada neste dia.','empty'));
   for(const [i,r] of [...list].reverse().entries()){
     const article=element('article','','match');
@@ -229,12 +249,13 @@ function renderHistory(){
   const az=wins.filter(r=>r.winner==='azul'||(!r.winner&&r.blue>r.yellow)).length;
   $('daySummary').textContent=`${wins.length} concluída(s) · vitórias AM ${am} / AZ ${az} · ${list.length-wins.length} parcial(is). Domínio total: AM ${formatTime(list.reduce((n,r)=>n+r.yellow,0))} / AZ ${formatTime(list.reduce((n,r)=>n+r.blue,0))}.`;
   $('active').hidden=flashSupport||!store.draft;
+  agendarRelatorio();
   if(store.draft)$('active').textContent=`Partida em acompanhamento · amarelo ${formatTime(store.draft.yellow)} × azul ${formatTime(store.draft.blue)}. O resultado será registrado quando a central informar o fim.`;
 }
-function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-function reportPages(records){
+function reportPages(records,requestedPage=null){
   const chunks=[];for(let i=0;i<records.length;i+=7)chunks.push(records.slice(i,i+7));
-  return chunks.map((items,index)=>{
+  return (requestedPage===null?chunks:chunks.slice(requestedPage,requestedPage+1)).map((items,index)=>{
+    if(requestedPage!==null)index=requestedPage;
     const canvas=document.createElement('canvas');canvas.width=1240;canvas.height=1754;const c=canvas.getContext('2d');
     c.fillStyle='#f7f7f0';c.fillRect(0,0,1240,1754);c.fillStyle='#27371c';c.fillRect(0,0,1240,220);
     c.fillStyle='#c3d69a';c.font='bold 20px sans-serif';c.fillText('DOMINAÇÃO · RELATÓRIO DE CAMPO',64,60);c.fillStyle='#fff';c.font='bold 46px sans-serif';c.fillText('OVERGROWN',64,120);
@@ -256,52 +277,132 @@ function reportPages(records){
   });
 }
 const canvasBlob=(canvas,type='image/png')=>new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('Não foi possível gerar a imagem.')),type,.9));
-// PDF multipágina com páginas JPEG incorporadas; não usa serviço nem biblioteca externa.
-async function makePDF(canvases){
-  const enc=new TextEncoder(),parts=[],offsets=[0];let size=0;
-  function add(x){const b=typeof x==='string'?enc.encode(x):x;parts.push(b);size+=b.length;}
-  function obj(id,head,data){offsets[id]=size;add(`${id} 0 obj\n${head}`);if(data){add('\nstream\n');add(data);add('\nendstream');}add('\nendobj\n');}
-  add('%PDF-1.4\n');obj(1,'<< /Type /Catalog /Pages 2 0 R >>');obj(2,`<< /Type /Pages /Count ${canvases.length} /Kids [${canvases.map((_,i)=>`${3+i*3} 0 R`).join(' ')}] >>`);
-  for(let i=0;i<canvases.length;i++){
-    const id=3+i*3,jpeg=new Uint8Array(await (await canvasBlob(canvases[i],'image/jpeg')).arrayBuffer()),content=enc.encode('q\n595 0 0 842 0 0 cm\n/Im0 Do\nQ\n');
-    obj(id,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /XObject << /Im0 ${id+1} 0 R >> >> /Contents ${id+2} 0 R >>`);
-    obj(id+1,`<< /Type /XObject /Subtype /Image /Width 1240 /Height 1754 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>`,jpeg);
-    obj(id+2,`<< /Length ${content.length} >>`,content);
+// Interface de testes: os estados exibidos sao confirmados pela central.
+let hardware=null,hardwareWaiting=false,hardwareRevision=0,activeTab='jogo';
+const components=[
+ {bit:0,name:'Sirene principal',target:0,type:1,detail:'Bipes curtos, início e vitória'},
+ {bit:1,name:'Sirene secundária',target:0,type:2,detail:'Aviso de captura'},
+ {bit:2,name:'Fita de LEDs',target:0,type:3,detail:'Teste vermelho, verde e azul · 3 s'},
+ {bit:3,name:'Tela da central',target:0,type:4,detail:'Padrão de leitura · 3 s'},
+ {bit:4,name:'Buzzer amarelo',target:1,type:1,detail:'Toque de teste · 500 ms'},
+ {bit:5,name:'Tela amarela',target:1,type:2,detail:'Padrão de leitura · 3 s'},
+ {bit:6,name:'Buzzer azul',target:2,type:1,detail:'Toque de teste · 500 ms'},
+ {bit:7,name:'Tela azul',target:2,type:2,detail:'Padrão de leitura · 3 s'}
+];
+function buildComponents(){
+ const host=$('components');host.replaceChildren();
+ for(const c of components){
+  const card=element('article','','component');
+  const head=element('div','','row between');head.append(element('h3',c.name));
+  const label=element('label','','switch');const input=document.createElement('input');input.type='checkbox';input.dataset.bit=c.bit;input.disabled=true;input.setAttribute('aria-label','Ativar '+c.name);
+  input.onchange=()=>{const mask=input.checked?hardware.mask|(1<<c.bit):hardware.mask&~(1<<c.bit);hardwareCommand('M,'+mask,h=>h.mask===mask);};
+  label.append(input,document.createTextNode('Ativo'));head.append(label);card.append(head,element('small',c.detail));
+  const button=element('button','Testar componente','secondary');button.dataset.test=c.type;button.dataset.target=c.target;button.dataset.bit=c.bit;button.disabled=true;
+  button.onclick=()=>testComponent(c.target,c.type);card.append(button);host.append(card);
+ }
+}
+function selectTab(tab){
+ if(!['jogo','relatorios','testes'].includes(tab))tab='jogo';activeTab=tab;
+ document.querySelectorAll('[data-tab]').forEach(b=>{const selected=b.dataset.tab===tab;b.setAttribute('aria-selected',String(selected));b.tabIndex=selected?0:-1;});
+ for(const name of ['jogo','relatorios','testes'])$('tab-'+name).hidden=name!==tab;
+ history.replaceState(null,'','#'+tab);if(tab==='relatorios')agendarRelatorio();
+}
+function renderHardware(){
+ const h=hardware;
+ $('hardwareNotice').textContent=!connected?'Conecte a central para configurar e testar.':!h?'Aguardando diagnóstico. Se não chegar, grave o firmware desta versão.':h.mode?'Modo teste ativo: pré-jogo congelado. Saídas só serão acionadas pelos testes.':'Modo jogo: entre no modo teste durante o pré-jogo para testar componentes.';
+ if(!h){$('soundState').textContent='Som: aguardando central';return;}
+ const silencioso=(h.mask&83)===0;
+ $('soundState').textContent=silencioso?'MODO SILENCIOSO':`Som ${h.mask&1?'principal ativo':'principal desligado'}`;
+ $('soundState').classList.toggle('warning',silencioso||h.mask!==255);
+ $('enabledSummary').textContent=(components.filter(c=>!(h.mask&(1<<c.bit))).map(c=>c.name).join(', ')||'Todos os componentes ativos')+(h.inputs&128?'':' — ATENÇÃO: configuração apenas em RAM; a gravação na memória não foi confirmada.');
+ document.querySelectorAll('input[data-bit]').forEach(input=>{input.checked=!!(h.mask&(1<<Number(input.dataset.bit)));});
+ $('pulseEcho').textContent=`Central: ${h.pulse} ms`;
+ const labels=['AM central','AZ central','AM maleta','AZ maleta'];
+ $('buttonsLive').textContent=labels.map((name,i)=>`${name}: ${i>=2&&!(h.online&(1<<(i-2)))?'sem retorno':h.inputs&(1<<i)?'PRESSIONADO':'solto'}`).join(' · ');
+ $('linksLive').textContent=`Amarela: ${h.online&1?'conectada':'sem retorno'} · Azul: ${h.online&2?'conectada':'sem retorno'}`;
+ $('oledLive').textContent=`OLED detectado na inicialização — central: ${h.inputs&16?'sim':'não'} · amarela: ${h.online&1?(h.inputs&32?'sim':'não'):'sem retorno'} · azul: ${h.online&2?(h.inputs&64?'sim':'não'):'sem retorno'}`;
+ const estados={0:'Nenhum teste em andamento.',1:'Comando de teste executado/recebido. Confira o componente fisicamente.',2:'Teste bloqueado: componente desativado.',3:'Componente ou maleta indisponível.',4:'Aguardando a maleta confirmar o comando…',5:'A maleta não confirmou. Confira alimentação e comunicação.',6:'Entre no modo teste durante o pré-jogo.'};
+ $('testResult').textContent=estados[h.result]||'Estado de teste desconhecido.';
+ controls();
+}
+async function hardwareCommand(payload,confirmed){
+ if(!hardware||hardwareWaiting)return;
+ const epoch=connectionEpoch,revision=hardwareRevision;hardwareWaiting=true;controls();
+ try{
+  if(!await send(payload))return;
+  const until=Date.now()+4000;
+  while(Date.now()<until){
+   if(epoch!==connectionEpoch||!connected)return;
+   if(hardwareRevision>revision && confirmed(hardware)){message('Configuração confirmada pela central.');return true;}
+   await new Promise(resolve=>setTimeout(resolve,80));
   }
-  const start=size;add(`xref\n0 ${offsets.length}\n0000000000 65535 f \n`);for(const off of offsets.slice(1))add(`${String(off).padStart(10,'0')} 00000 n \n`);
-  add(`trailer\n<< /Size ${offsets.length} /Root 1 0 R >>\nstartxref\n${start}\n%%EOF`);return new Blob(parts,{type:'application/pdf'});
+  message('A central não confirmou a alteração. Confira a conexão e tente novamente.',true);
+ }finally{if(epoch===connectionEpoch){hardwareWaiting=false;controls();}}
 }
-async function exportReport(type){
-  if(exportBusy)return;
-  const records=selectedRecords(),panel=$('exportPanel');
-  panel.replaceChildren();panel.hidden=true;
-  exportUrls.forEach(url=>URL.revokeObjectURL(url));exportUrls=[];
-  if(!records.length){$('exportStatus').textContent='Não há partidas registradas neste dia. Escolha outro dia ou busque os resultados da central. A partida em andamento ainda não entra no relatório.';return;}
-  exportBusy=true;$('png').disabled=$('pdf').disabled=true;
-  $('exportStatus').textContent='Preparando relatório…';
-  try{
-    const pages=reportPages(records),base=`overgrown-${$('unknown').checked?'sem-data':$('day').value}`;
-    const files=type==='pdf'?[await makePDF(pages)]:await Promise.all(pages.map(page=>canvasBlob(page)));
-    for(let i=0;i<files.length;i++){
-      const url=URL.createObjectURL(files[i]);exportUrls.push(url);
-      const name=`${base}${files.length>1?`-${i+1}`:''}.${type}`;
-      const section=element('div','','notice');
-      section.append(element('h3',type==='pdf'?'PDF pronto':`Imagem ${i+1} de ${files.length}`));
-      if(type==='png'){
-        const image=document.createElement('img');image.src=url;image.alt=`Relatório ${name}`;
-        image.style.cssText='display:block;width:100%;height:auto;margin:12px 0;border-radius:6px';section.append(image);
-      }
-      // Link pronto antes do toque: o download parte de um gesto real do usuário.
-      const link=element('a',type==='pdf'?'Baixar PDF':`Baixar imagem${files.length>1?` ${i+1}`:''}`);
-      link.href=url;link.download=name;link.style.cssText='display:inline-block;padding:12px 0;font-weight:bold';
-      const open=element('a','Abrir arquivo');open.href=url;open.target='_blank';open.rel='noopener';open.style.marginLeft='20px';
-      section.append(link,open);panel.append(section);
-    }
-    panel.hidden=false;
-    $('exportStatus').textContent=type==='png'?'Imagem pronta abaixo. Toque em “Baixar imagem”. No celular, você também pode manter a imagem pressionada para ver as opções de salvar ou compartilhar.':'PDF pronto abaixo. Toque em “Baixar PDF” ou “Abrir arquivo”.';
-  }catch(error){$('exportStatus').textContent=`Não foi possível gerar o relatório: ${error.message}`;}
-  finally{exportBusy=false;renderHistory();}
+async function testComponent(target,type){
+ const old=hardware?.testId;return hardwareCommand(`X,${target},${type}`,h=>h.testId!==old&&h.result!==4);
 }
+function hardwareControls(){
+ const ready=isFresh()&&!!hardware&&!busy&&!hardwareWaiting;
+ document.querySelectorAll('input[data-bit]').forEach(x=>x.disabled=!ready);
+ document.querySelectorAll('[data-test]').forEach(b=>{const target=Number(b.dataset.target),bit=b.dataset.bit;const online=target===0||(hardware?.online&(1<<(target-1)));b.disabled=!ready||!hardware?.mode||!online||(bit!==undefined&&!(hardware.mask&(1<<Number(bit))));});
+ const canEnter=last?.state===0||(last?.state===6&&last?.pausedFrom===0);
+ $('enterTests').disabled=!ready||!!hardware?.mode||!canEnter;$('leaveTests').disabled=!ready||!hardware?.mode;
+ for(const id of ['silent','enableAll','savePulse'])$(id).disabled=!ready;
+ $('stopTests').disabled=!ready||!hardware?.mode;
+ if(hardware?.mode){$('start').disabled=true;$('pause').disabled=true;}
+}
+// Imagem pronta ANTES do toque de salvar/compartilhar: preserva o gesto do usuario.
+let reportBundle=[],reportKey='',reportJob=0,reportTimer=0;
+function keyReport(){return JSON.stringify([$('day').value,$('unknown').checked,selectedRecords()]);}
+function clearReport(){for(const r of reportBundle)URL.revokeObjectURL(r.url);reportBundle=[];$('exportPanel').replaceChildren();$('exportPanel').hidden=true;}
+function agendarRelatorio(){
+ if(activeTab!=='relatorios')return;
+ const key=keyReport();if(key===reportKey)return;
+ reportJob++;clearReport();$('png').disabled=true;
+ clearTimeout(reportTimer);reportTimer=setTimeout(()=>prepareImages(),150);
+}
+async function prepareImages(){
+ const records=selectedRecords(),key=keyReport(),job=++reportJob;
+ reportKey=key;clearReport();exportBusy=true;$('png').disabled=true;
+ if(!records.length){exportBusy=false;$('png').disabled=true;$('exportStatus').textContent='Escolha um dia com partidas ou busque os resultados da central.';return;}
+ $('exportStatus').textContent='Preparando as imagens do relatório…';
+ try{
+  const count=Math.ceil(records.length/7),base=`overgrown-${$('unknown').checked?'sem-data':$('day').value}`;
+  for(let i=0;i<count;i++){
+   $('exportStatus').textContent=`Preparando imagem ${i+1} de ${count}…`;
+   const canvas=reportPages(records,i)[0],blob=await canvasBlob(canvas);if(job!==reportJob)return;
+   const name=`${base}${count>1?'-'+(i+1):''}.png`;
+   const file=new File([blob],name,{type:'image/png'}),url=URL.createObjectURL(blob),dataUrl=canvas.toDataURL('image/png');canvas.width=canvas.height=0;
+   reportBundle.push({file,url,dataUrl,name});
+  }
+  if(job!==reportJob)return;
+  $('exportPanel').hidden=false;
+  reportBundle.forEach((r,i)=>{
+   const section=element('article','','image-card');section.append(element('h3',`Imagem ${i+1} de ${reportBundle.length}`));
+   const image=document.createElement('img');image.src=r.dataUrl;image.alt=`Relatório ${dayTitle()}, página ${i+1}`;image.loading='lazy';section.append(image);
+   const actions=element('div','','row');const baixar=element('a','Baixar PNG','button');baixar.href=r.url;baixar.download=r.name;
+   baixar.onclick=()=>$('exportStatus').textContent='Download solicitado. Confira a pasta Downloads. Para a galeria do celular, use Compartilhar ou mantenha a imagem pressionada.';
+   actions.append(baixar);
+   if(navigator.canShare?.({files:[r.file]})){const share=element('button','Compartilhar','secondary');share.onclick=()=>saveImage(i);actions.append(share);}
+   const abrir=element('a','Abrir imagem','button secondary');abrir.href=r.url;abrir.target='_blank';abrir.rel='noopener';actions.append(abrir);
+   section.append(actions,element('small','No celular, mantenha a imagem pressionada para salvar ou compartilhar.'));$('exportPanel').append(section);
+  });
+  $('exportStatus').textContent=`${reportBundle.length} imagem(ns) pronta(s). Salve ou compartilhe pelos botões abaixo.`;
+ }catch(error){if(job!==reportJob)return;reportKey='';$('exportStatus').textContent=`Falha ao gerar imagem: ${error.message}. Toque em Gerar novamente.`;}
+ finally{if(job===reportJob){exportBusy=false;$('png').disabled=!reportBundle.length;}}
+}
+async function saveImage(index=0){
+ const r=reportBundle[index];if(!r)return;
+ if(navigator.canShare?.({files:[r.file]})){
+  try{await navigator.share({files:[r.file],title:'Relatório Overgrown'});$('exportStatus').textContent='Imagem enviada ao compartilhamento do celular.';return;}
+  catch(error){if(error.name==='AbortError')return;$('exportStatus').textContent='Compartilhamento indisponível. Use Baixar PNG ou mantenha a imagem pressionada.';return;}
+ }
+ const a=document.createElement('a');a.href=r.url;a.download=r.name;document.body.append(a);a.click();a.remove();
+ $('exportStatus').textContent='Download solicitado. Confira a pasta Downloads. As demais páginas podem ser salvas individualmente abaixo.';
+}
+function exportReport(){if(!reportBundle.length){prepareImages();return;}return saveImage(0);}
+
 $('connect').onclick=connect;
 document.querySelectorAll('[data-setting]').forEach(b=>b.onclick=()=>setting(b.dataset.setting));
 $('pause').onclick=()=>send('Z');
@@ -309,8 +410,7 @@ async function restart(command){pendingRestart={command,key:last?.key,until:Date
 $('start').onclick=()=>{if(confirm('Iniciar agora? A central zera o placar ao iniciar.'))restart('I');};
 $('reset').onclick=()=>{if(confirm('Reiniciar para o pré-jogo? O último placar acompanhado será preservado no histórico.'))restart('R');};
 $('day').value=localDay(Date.now());$('day').onchange=()=>{$('unknown').checked=false;renderHistory();};$('unknown').onchange=renderHistory;$('syncHistory').onclick=()=>syncHistory();$('today').onclick=()=>{$('unknown').checked=false;$('day').value=localDay(Date.now());renderHistory();};
-$('png').onclick=()=>exportReport('png');$('pdf').onclick=()=>exportReport('pdf');
-$('backup').onclick=()=>download(new Blob([JSON.stringify(store,null,2)],{type:'application/json'}),`overgrown-backup-${localDay(Date.now())}.json`);
+$('png').onclick=()=>exportReport();$('regenerate').onclick=()=>prepareImages();
 $('restore').onclick=()=>$('backupFile').click();
 $('backupFile').onchange=async event=>{
   const file=event.target.files[0];if(!file)return;
@@ -324,7 +424,14 @@ $('backupFile').onchange=async event=>{
 };
 document.addEventListener('visibilitychange',()=>{if(document.hidden)markGap();else renderLive();});
 setInterval(()=>{if(connected&&flashSupport&&Date.now()-lastHistorySync>30000)syncHistory();},5000);
-setInterval(renderLive,250);renderHistory();controls();
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>selectTab(b.dataset.tab));
+document.querySelector('.tabs').addEventListener('keydown',event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();const tabs=['jogo','relatorios','testes'];selectTab(tabs[(tabs.indexOf(activeTab)+(event.key==='ArrowRight'?1:2))%3]);document.querySelector(`[data-tab="${activeTab}"]`).focus();});
+$('enterTests').onclick=()=>hardwareCommand('D,1',h=>h.mode);$('leaveTests').onclick=()=>hardwareCommand('D,0',h=>!h.mode);
+$('stopTests').onclick=()=>hardwareCommand('S',h=>h.result===0);
+$('silent').onclick=()=>{const mask=hardware.mask&~83;hardwareCommand('M,'+mask,h=>h.mask===mask);};
+$('enableAll').onclick=()=>hardwareCommand('M,255',h=>h.mask===255);
+$('savePulse').onclick=()=>{const input=$('pulse');if(input.reportValidity())hardwareCommand('U,'+Number(input.value),h=>h.pulse===Number(input.value));};
+buildComponents();document.querySelectorAll('[data-test]:not([data-bit])').forEach(b=>b.onclick=()=>testComponent(Number(b.dataset.target),Number(b.dataset.test)));selectTab(location.hash.slice(1));setInterval(renderLive,250);renderHistory();controls();
 </script>
 </body>
 </html>

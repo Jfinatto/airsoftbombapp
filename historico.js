@@ -28,6 +28,7 @@
     const hist = await service.getCharacteristic(UUID);
     const escrever = texto => (rx.writeValueWithResponse || rx.writeValue).call(rx,new TextEncoder().encode(texto));
     await escrever('T,' + Math.floor(Date.now() / 1000));
+    await escrever('F,' + (-new Date().getTimezoneOffset()));
     let cursor = 0, primeira, registros = [], flags = 0;
     for (let i = 0; i < 10; i++) {
       await escrever('H,' + cursor);
